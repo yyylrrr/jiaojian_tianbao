@@ -2,17 +2,46 @@
 	<div>
 		<div class="info-box">
 			<el-card class="box-card">
-				<el-tabs>
-					<el-tab-pane label="测量队">
+				<el-tabs v-model="tabsName" @tab-click="handleClick">
+					<el-tab-pane label="测量队" name="测量队">
 						<el-row>
-							<el-col :span="1">
-									<span class="select-title">围岩等级</span>
+							<el-col :span="4">
+								<dt class="select-title">隧道类型</dt>
+								<el-select v-model="tunnelvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getregiontype">
+									<el-option
+										v-for="item in tunneloptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
 							</el-col>
-							<el-col :span="2">
+							<el-col :span="4">
+								<dt class="select-title">所属区域</dt>
+								<el-select v-model="regionvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getfactortype">
+									<el-option
+										v-for="item in regionoptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handler"
+									@change="getlegendtype">
 									<el-option
 										v-for="item in legendoptions"
 										:key="item.legendvalue"
@@ -21,86 +50,96 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="1">
-									<span class="select-title">所属区域</span>
-							</el-col>
-							<el-col :span="3">
-								<el-select v-model="regionvalue" 
-									clearable 
-									size="mini"
-									class="search-box-handler">
-									<el-option
-										v-for="item in regionoptions"
-										:key="item.regionvalue"
-										:label="item.regionlabel"
-										:value="item.regionvalue">
-									</el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="1">
-									<span class="select-title">里&emsp;程&emsp;段</span>
-							</el-col>
 							<el-col :span="4">
+									<dt class="select-title">围岩里程段</dt>
 								<el-select v-model="factorvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handlerr"
+									@change="confirmfactor">
 									<el-option
 										v-for="item in factoroptions"
-										:key="item.factorvalue"
-										:label="item.factorlabel"
-										:value="item.factorvalue">
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titlee">循环类型</dt>
+								<el-select v-model="circlevalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerr"
+									@change="confirmcircle">
+									<el-option
+										v-for="item in circleoptions"
+										:key="item.circlevalue"
+										:label="item.circlelabel"
+										:value="item.circlevalue">
 									</el-option>
 								</el-select>
 							</el-col>
 							<el-col :span="2">
 									<el-button class="certain-button" size="mini"
-									type="primary" icon="el-icon-search" @click="search">确认</el-button>
+									type="primary" icon="el-icon-search" @click="getsearch">确认</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
 							<el-col :span="24">
-								<div class="search-list">
+								<div>
 										<el-table
 										:data="searchList"
+										height="650"
+										style="width: 100%"
 										border
-										class="search-result-list"
+										@selection-change="handleSelectionChange"
+										@sort-change='sortChange'
+										@row-dblclick="clickchange"
 										>
 										<el-table-column
 										align="center"
 										type = "index"
+										:index="indexMethod"
 										label= "序号"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="name"
+										prop="modelType"
 										label="构件名称">
 										</el-table-column>
 										<el-table-column
+										sortable='custom'
 										align="center"
-										prop="code"
-										label="构件编码">
+										prop="startSegment"
+										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="legend"
-										label="围岩等级">
+										prop="endSegment"
+										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="workinfo"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="datainfo"
 										label="数据内容">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.value" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.value }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="designref"
 										label="设计参考值">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.valueRefer" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.valueRefer }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
@@ -108,13 +147,16 @@
 										label="单位"
 										width="80">
 										</el-table-column>
-										<el-table-column align="center" label="操作" width="120">
-											<el-button
-												type="warning"
-												size="mini"
-											>
-												操作
-											</el-button>
+										<el-table-column
+										align="center"
+										prop="modifyCreatDate"
+										label="创建时间">
+										</el-table-column>
+										<el-table-column
+										align="center"
+										label="操作"
+										width="120"
+										type="selection">
 										</el-table-column>
 									</el-table>
 								</div>
@@ -126,10 +168,10 @@
 									<el-pagination
 										@size-change="handleSizeChange"
 										@current-change="handleCurrentChange"
-										:page-sizes="[100, 200, 300, 400]"
-										:page-size="100"
+										:page-sizes = [10,20,30,40]
+										:page-size = 10
 										layout="total, sizes, prev, pager, next, jumper"
-										:total="400">
+										:total= totalpage>
 									</el-pagination>
 								</div>
 							</el-col>
@@ -138,29 +180,58 @@
 							<el-col class="button-group">
 								<el-col :span="2">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-upload">提交</el-button>
+									type="success" icon="el-icon-upload" @click="updateDataInfo">提交</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="primary" icon="el-icon-edit">编辑</el-button>
+									type="primary" icon="el-icon-edit" @click="operateDataInfo">编辑</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="danger" icon="el-icon-circle-close">取消</el-button>
+									type="danger" icon="el-icon-circle-close" @click="cancelEdit">取消</el-button>
 								</el-col>
 							</el-col>
 						</el-row>
 					</el-tab-pane>
-					<el-tab-pane label="试验室">
+					<el-tab-pane label="实验室" name="实验室">
 						<el-row>
-							<el-col :span="1">
-									<span class="select-title">围岩等级</span>
+							<el-col :span="4">
+								<dt class="select-title">隧道类型</dt>
+								<el-select v-model="tunnelvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getregiontype">
+									<el-option
+										v-for="item in tunneloptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
 							</el-col>
-							<el-col :span="2">
+							<el-col :span="4">
+								<dt class="select-title">所属区域</dt>
+								<el-select v-model="regionvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getfactortype">
+									<el-option
+										v-for="item in regionoptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handler"
+									@change="getlegendtype">
 									<el-option
 										v-for="item in legendoptions"
 										:key="item.legendvalue"
@@ -169,86 +240,96 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="1">
-									<span class="select-title">所属区域</span>
-							</el-col>
-							<el-col :span="3">
-								<el-select v-model="regionvalue" 
-									clearable 
-									size="mini"
-									class="search-box-handler">
-									<el-option
-										v-for="item in regionoptions"
-										:key="item.regionvalue"
-										:label="item.regionlabel"
-										:value="item.regionvalue">
-									</el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="1">
-									<span class="select-title">里&emsp;程&emsp;段</span>
-							</el-col>
 							<el-col :span="4">
+									<dt class="select-title">围岩里程段</dt>
 								<el-select v-model="factorvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handlerr"
+									@change="confirmfactor">
 									<el-option
 										v-for="item in factoroptions"
-										:key="item.factorvalue"
-										:label="item.factorlabel"
-										:value="item.factorvalue">
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titlee">循环类型</dt>
+								<el-select v-model="circlevalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerr"
+									@change="confirmcircle">
+									<el-option
+										v-for="item in circleoptions"
+										:key="item.circlevalue"
+										:label="item.circlelabel"
+										:value="item.circlevalue">
 									</el-option>
 								</el-select>
 							</el-col>
 							<el-col :span="2">
 									<el-button class="certain-button" size="mini"
-									type="primary" icon="el-icon-search" @click="search">确认</el-button>
+									type="primary" icon="el-icon-search" @click="getsearch">确认</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
 							<el-col :span="24">
-								<div class="search-list">
+								<div>
 										<el-table
 										:data="searchList"
+										height="650"
+										style="width: 100%"
 										border
-										class="search-result-list"
+										@selection-change="handleSelectionChange"
+										@sort-change='sortChange'
+										@row-dblclick="clickchange"
 										>
 										<el-table-column
 										align="center"
 										type = "index"
+										:index="indexMethod"
 										label= "序号"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="name"
+										prop="modelType"
 										label="构件名称">
 										</el-table-column>
 										<el-table-column
+										sortable='custom'
 										align="center"
-										prop="code"
-										label="构件编码">
+										prop="startSegment"
+										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="legend"
-										label="围岩等级">
+										prop="endSegment"
+										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="workinfo"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="datainfo"
 										label="数据内容">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.value" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.value }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="designref"
 										label="设计参考值">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.valueRefer" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.valueRefer }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
@@ -256,16 +337,16 @@
 										label="单位"
 										width="80">
 										</el-table-column>
-										<el-table-column align="center" label="操作" width="120">
-											<template slot-scope="scope">
-											<el-button
-												type="warning"
-												size="mini"
-												@click="operateDataInfo(scope.row)"
-											>
-												操作
-											</el-button>
-											</template>
+										<el-table-column
+										align="center"
+										prop="modifyCreatDate"
+										label="创建时间">
+										</el-table-column>
+										<el-table-column
+										align="center"
+										label="操作"
+										width="120"
+										type="selection">
 										</el-table-column>
 									</el-table>
 								</div>
@@ -277,10 +358,10 @@
 									<el-pagination
 										@size-change="handleSizeChange"
 										@current-change="handleCurrentChange"
-										:page-sizes="[100, 200, 300, 400]"
-										:page-size="100"
+										:page-sizes = [10,20,30,40]
+										:page-size = 10
 										layout="total, sizes, prev, pager, next, jumper"
-										:total="400">
+										:total= totalpage>
 									</el-pagination>
 								</div>
 							</el-col>
@@ -289,19 +370,15 @@
 							<el-col class="button-group">
 								<el-col :span="2">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-upload">提交</el-button>
+									type="success" icon="el-icon-upload" @click="updateDataInfo">提交</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="primary" icon="el-icon-edit">编辑</el-button>
+									type="primary" icon="el-icon-edit" @click="operateDataInfo">编辑</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="danger" icon="el-icon-circle-close">取消</el-button>
-								</el-col>
-								<el-col :span="2" :offset="1">
-									<el-button class="certain-button" size="small"
-									type="primary" icon="el-icon-upload" @click="uploadDataInfo">导入</el-button>
+									type="danger" icon="el-icon-circle-close" @click="cancelEdit">取消</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
@@ -310,16 +387,45 @@
 							</el-col>
 						</el-row>
 					</el-tab-pane>
-					<el-tab-pane label="工程部">
+					<el-tab-pane label="工程部" name="工程部">
 						<el-row>
-							<el-col :span="1">
-									<span class="select-title">围岩等级</span>
+							<el-col :span="4">
+								<dt class="select-title">隧道类型</dt>
+								<el-select v-model="tunnelvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getregiontype">
+									<el-option
+										v-for="item in tunneloptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
 							</el-col>
-							<el-col :span="2">
+							<el-col :span="4">
+								<dt class="select-title">所属区域</dt>
+								<el-select v-model="regionvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getfactortype">
+									<el-option
+										v-for="item in regionoptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handler"
+									@change="getlegendtype">
 									<el-option
 										v-for="item in legendoptions"
 										:key="item.legendvalue"
@@ -328,86 +434,96 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="1">
-									<span class="select-title">所属区域</span>
-							</el-col>
-							<el-col :span="3">
-								<el-select v-model="regionvalue" 
-									clearable 
-									size="mini"
-									class="search-box-handler">
-									<el-option
-										v-for="item in regionoptions"
-										:key="item.regionvalue"
-										:label="item.regionlabel"
-										:value="item.regionvalue">
-									</el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="1">
-									<span class="select-title">里&emsp;程&emsp;段</span>
-							</el-col>
 							<el-col :span="4">
+									<dt class="select-title">围岩里程段</dt>
 								<el-select v-model="factorvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handlerr"
+									@change="confirmfactor">
 									<el-option
 										v-for="item in factoroptions"
-										:key="item.factorvalue"
-										:label="item.factorlabel"
-										:value="item.factorvalue">
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titlee">循环类型</dt>
+								<el-select v-model="circlevalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerr"
+									@change="confirmcircle">
+									<el-option
+										v-for="item in circleoptions"
+										:key="item.circlevalue"
+										:label="item.circlelabel"
+										:value="item.circlevalue">
 									</el-option>
 								</el-select>
 							</el-col>
 							<el-col :span="2">
 									<el-button class="certain-button" size="mini"
-									type="primary" icon="el-icon-search" @click="search">确认</el-button>
+									type="primary" icon="el-icon-search" @click="getsearch">确认</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
 							<el-col :span="24">
-								<div class="search-list">
+								<div>
 										<el-table
 										:data="searchList"
+										height="650"
+										style="width: 100%"
 										border
-										class="search-result-list"
+										@selection-change="handleSelectionChange"
+										@sort-change='sortChange'
+										@row-dblclick="clickchange"
 										>
 										<el-table-column
 										align="center"
 										type = "index"
+										:index="indexMethod"
 										label= "序号"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="name"
+										prop="modelType"
 										label="构件名称">
 										</el-table-column>
 										<el-table-column
+										sortable='custom'
 										align="center"
-										prop="code"
-										label="构件编码">
+										prop="startSegment"
+										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="legend"
-										label="围岩等级">
+										prop="endSegment"
+										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="workinfo"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="datainfo"
 										label="数据内容">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.value" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.value }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="designref"
 										label="设计参考值">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.valueRefer" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.valueRefer }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
@@ -415,13 +531,16 @@
 										label="单位"
 										width="80">
 										</el-table-column>
-										<el-table-column align="center" label="操作" width="120">
-											<el-button
-												type="warning"
-												size="mini"
-											>
-												操作
-											</el-button>
+										<el-table-column
+										align="center"
+										prop="modifyCreatDate"
+										label="创建时间">
+										</el-table-column>
+										<el-table-column
+										align="center"
+										label="操作"
+										width="120"
+										type="selection">
 										</el-table-column>
 									</el-table>
 								</div>
@@ -433,10 +552,10 @@
 									<el-pagination
 										@size-change="handleSizeChange"
 										@current-change="handleCurrentChange"
-										:page-sizes="[100, 200, 300, 400]"
-										:page-size="100"
+										:page-sizes = [10,20,30,40]
+										:page-size = 10
 										layout="total, sizes, prev, pager, next, jumper"
-										:total="400">
+										:total= totalpage>
 									</el-pagination>
 								</div>
 							</el-col>
@@ -445,15 +564,15 @@
 							<el-col class="button-group">
 								<el-col :span="2">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-upload">提交</el-button>
+									type="success" icon="el-icon-upload" @click="updateDataInfo">提交</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="primary" icon="el-icon-edit">编辑</el-button>
+									type="primary" icon="el-icon-edit" @click="operateDataInfo">编辑</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="danger" icon="el-icon-circle-close">取消</el-button>
+									type="danger" icon="el-icon-circle-close" @click="cancelEdit">取消</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
@@ -462,16 +581,45 @@
 							</el-col>
 						</el-row>
 					</el-tab-pane>
-					<el-tab-pane label="质检部">
+					<el-tab-pane label="质检部" name="质检部">
 						<el-row>
-							<el-col :span="1">
-									<span class="select-title">围岩等级</span>
+							<el-col :span="4">
+								<dt class="select-title">隧道类型</dt>
+								<el-select v-model="tunnelvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getregiontype">
+									<el-option
+										v-for="item in tunneloptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
 							</el-col>
-							<el-col :span="2">
+							<el-col :span="4">
+								<dt class="select-title">所属区域</dt>
+								<el-select v-model="regionvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getfactortype">
+									<el-option
+										v-for="item in regionoptions"
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handler"
+									@change="getlegendtype">
 									<el-option
 										v-for="item in legendoptions"
 										:key="item.legendvalue"
@@ -480,86 +628,96 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="1">
-									<span class="select-title">所属区域</span>
-							</el-col>
-							<el-col :span="3">
-								<el-select v-model="regionvalue" 
-									clearable 
-									size="mini"
-									class="search-box-handler">
-									<el-option
-										v-for="item in regionoptions"
-										:key="item.regionvalue"
-										:label="item.regionlabel"
-										:value="item.regionvalue">
-									</el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="1">
-									<span class="select-title">里&emsp;程&emsp;段</span>
-							</el-col>
 							<el-col :span="4">
+									<dt class="select-title">围岩里程段</dt>
 								<el-select v-model="factorvalue" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handlerr"
+									@change="confirmfactor">
 									<el-option
 										v-for="item in factoroptions"
-										:key="item.factorvalue"
-										:label="item.factorlabel"
-										:value="item.factorvalue">
+										:key="item.code"
+										:label="item.chineseName"
+										:value="item.code">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titlee">循环类型</dt>
+								<el-select v-model="circlevalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerr"
+									@change="confirmcircle">
+									<el-option
+										v-for="item in circleoptions"
+										:key="item.circlevalue"
+										:label="item.circlelabel"
+										:value="item.circlevalue">
 									</el-option>
 								</el-select>
 							</el-col>
 							<el-col :span="2">
 									<el-button class="certain-button" size="mini"
-									type="primary" icon="el-icon-search" @click="search">确认</el-button>
+									type="primary" icon="el-icon-search" @click="getsearch">确认</el-button>
 							</el-col>
 						</el-row>
 						<el-row>
 							<el-col :span="24">
-								<div class="search-list">
+								<div>
 										<el-table
 										:data="searchList"
+										height="650"
+										style="width: 100%"
 										border
-										class="search-result-list"
+										@selection-change="handleSelectionChange"
+										@sort-change='sortChange'
+										@row-dblclick="clickchange"
 										>
 										<el-table-column
 										align="center"
 										type = "index"
+										:index="indexMethod"
 										label= "序号"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="name"
+										prop="modelType"
 										label="构件名称">
 										</el-table-column>
 										<el-table-column
+										sortable='custom'
 										align="center"
-										prop="code"
-										label="构件编码">
+										prop="startSegment"
+										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="legend"
-										label="围岩等级">
+										prop="endSegment"
+										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="workinfo"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="datainfo"
 										label="数据内容">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.value" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.value }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
-										prop="designref"
 										label="设计参考值">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.valueRefer" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.valueRefer }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										align="center"
@@ -567,13 +725,16 @@
 										label="单位"
 										width="80">
 										</el-table-column>
-										<el-table-column align="center" label="操作" width="120">
-											<el-button
-												type="warning"
-												size="mini"
-											>
-												操作
-											</el-button>
+										<el-table-column
+										align="center"
+										prop="modifyCreatDate"
+										label="创建时间">
+										</el-table-column>
+										<el-table-column
+										align="center"
+										label="操作"
+										width="120"
+										type="selection">
 										</el-table-column>
 									</el-table>
 								</div>
@@ -585,10 +746,10 @@
 									<el-pagination
 										@size-change="handleSizeChange"
 										@current-change="handleCurrentChange"
-										:page-sizes="[100, 200, 300, 400]"
-										:page-size="100"
+										:page-sizes = [10,20,30,40]
+										:page-size = 10
 										layout="total, sizes, prev, pager, next, jumper"
-										:total="400">
+										:total= totalpage>
 									</el-pagination>
 								</div>
 							</el-col>
@@ -597,15 +758,19 @@
 							<el-col class="button-group">
 								<el-col :span="2">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-upload">提交</el-button>
+									type="success" icon="el-icon-upload" @click="updateDataInfo">提交</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="primary" icon="el-icon-edit">编辑</el-button>
+									type="primary" icon="el-icon-edit" @click="operateDataInfo">编辑</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="danger" icon="el-icon-circle-close">取消</el-button>
+									type="danger" icon="el-icon-circle-close" @click="cancelEdit">取消</el-button>
+								</el-col>
+								<el-col :span="2" :offset="1">
+									<el-button class="certain-button" size="small"
+									type="primary" icon="el-icon-upload" @click="uploadDataInfo">导入</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
@@ -630,6 +795,7 @@ import OperateDiolog from './components/OperateDiolog.vue'
 import UploadDiolog from './components/UploadDiolog.vue'
 import EngineerselectDiolog from './components/EngineerselectDiolog.vue'
 import QualitiselectDiolog from './components/QualitiselectDiolog.vue'
+import { gettunnel, getregion, getmileageSection, getpageQuery, updatebatchinfo } from '@/api/background.js'
 
 export default {
 	name: '',
@@ -641,42 +807,41 @@ export default {
 	},
 	data() {
 		return{
+			tunneloptions: [],
+			tunnelvalue:'',
 			legendoptions: [{
-				legendvalue: 'Ⅰ级',
-				legendlabel: 'Ⅰ级'
-			},{
-				legendvalue: 'Ⅱ级',
-				legendlabel: 'Ⅱ级'				
-			},{
-				legendvalue: 'Ⅲ级',
+				legendvalue: '01',
 				legendlabel: 'Ⅲ级'
+			},{
+				legendvalue: '02',
+				legendlabel: 'Ⅳ级'				
+			},{
+				legendvalue: '03',
+				legendlabel: 'Ⅴ级'
 			}],
 			legendvalue:'',
-			regionoptions: [{
-				regionvalue: '初支开挖',
-				regionlabel: '初支开挖'
-			},{
-				regionvalue: '仰拱',
-				regionlabel: '仰拱'				
-			},{
-				regionvalue: '二衬',
-				regionlabel: '二衬'
-			},{
-				regionvalue: '防、排水',
-				regionlabel: '防、排水'
-			}],
+			regionoptions: [],
 			regionvalue:'',
-			factoroptions: [{
-				factorvalue: '+DK200+100~DK200+120',
-				factorlabel: '+DK200+100~DK200+120'
-			},{
-				factorvalue: '+DK200+240~DK200+260',
-				factorlabel: '+DK200+240~DK200+260'				
-			}],
+			factoroptions: [],
+			setlegened: [],
 			factorvalue:'',
-
+			circleoptions: [{
+				circlevalue: '01',
+				circlelabel: '初支开挖'
+			},{
+				circlevalue: '02',
+				circlelabel: '仰拱'
+			},{
+				circlevalue: '03',
+				circlelabel: '二衬'
+			},{
+				circlevalue: '04',
+				circlelabel: '防、排水'
+			}],
+			circlevalue: '',
 			searchList: [],
-
+			tabsName: '测量队',
+			selectdata: [],
 			copyList: [
 				{
 					name: "喷混模型",
@@ -685,14 +850,23 @@ export default {
 					workinfo: "实际喷射厚度",
 					datainfo: "",
 					designref: "",
-					unit: "cm",
+					unit: "cm"
+				},
+				{
+					name: "喷混模型",
+					cdoe: "",
+					legend: "",
+					workinfo: "实际喷射厚度",
+					datainfo: "",
+					designref: "",
+					unit: "cm"
 				}
 			],
 
 			operateFrom: {
 				title: '质量自检',
 				opened:false,
-				operateBrief: {}
+				operateBrief: []
 			},
 
 			uploadFrom: {
@@ -711,23 +885,177 @@ export default {
 				title: '质检信息',
 				opened:false,
 				qualitiselectBrief: {}
-			}
+			},
+			totalpage: 0,
+			ebscode: '',
+			size: 10,
+			page: 1,
+			queryfileds: []
 		}
 	},
 	
+	created() {
+		this.gettunneltype();
+	},
+
 	methods: {
-		search() {
-			this.searchList = this.copyList
+		gettunneltype() {
+			gettunnel().then(res => {
+				this.tunneloptions = res.data;
+			}).catch(err =>{
+				console.log(err);
+			})
+		},
+
+		getregiontype(item) {
+      if (!item) {
+
+        return
+      }
+			getregion(item).then(res => {
+				this.regionoptions = res.data;
+			}).catch(err =>{
+				console.log(err);
+			})
+		},
+
+		getfactortype(item) {
+      if (!item) {
+
+        return
+      }
+			getmileageSection(item).then(res => {
+				this.setlegened = res.data;
+			}).catch(err =>{
+				console.log(err);
+			})
+		},
+
+		getlegendtype(item) {
+			if (!item) {
+
+        return
+      } else {
+				this.legendoptions.levle = item
+				this.factoroptions = this.setlegened.filter(item => item.code.substr(8,2) == this.legendoptions.levle)
+			}
+		},
+
+		confirmfactor(item) {
+      if (!item) {
+
+        return
+      } else {
+				this.factoroptions.code = item
+			}
+		},
+
+		confirmcircle(item) {
+      if (!item) {
+
+        return
+			} else {
+				this.circleoptions.code = item
+			}			
+		},
+		
+		handleSelectionChange(val) {
+			this.selectdata = val
+		},
+
+		getsearch() {
+			if(this.factoroptions.code != undefined && this.circleoptions.code != undefined){
+				const str1 = this.factoroptions.code.substr(0,2)
+				const str2 = this.factoroptions.code.substr(2,2)
+				const str3 = this.factoroptions.code.substr(4,2)
+				const str4 = this.factoroptions.code.substr(6,2)
+				const str5 = this.factoroptions.code.substr(8,2)
+				const str6 = this.factoroptions.code.substr(10,3)
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6 + '-' + this.circleoptions.code
+			}
+			getpageQuery(this.tabsName, this.ebscode, this.page, this.size).then(res => {
+				this.totalpage = res.detail.totalCount
+				this.searchList = res.data.map(item =>{
+					item.edit = false;
+					// item.createDate = 111;
+					//0001-01-01T01:15:32.000+00:00
+					// var date = item.createDate.substr(0,10)
+					// var time = item.createDate.substr(11,8)
+					// item.modifyCreatDate = date + ' ' + time
+					var date = new Date(item.createDate).toJSON();
+					item.modifyCreatDate = new Date(+new Date(date)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')  
+					return item;
+				})
+				console.log(this.searchList)
+			}).catch(err =>{
+				console.log(err);
+			})
 		},
 		handleSizeChange(val) {
-			console.log(`每页 ${val} 条`);
+			this.size = val
+			this.getsearch()
     },
 		handleCurrentChange(val) {
-			console.log(`当前页: ${val}`);
+			this.page = val
+			this.getsearch()
     },
-		operateDataInfo(row) {
-			this.operateFrom.opened = !this.operateFrom.opened;
-			this.operateFrom.operateBrief = row
+		updateDataInfo() {
+			this.cancelEdit()
+			for(var i = 0; i < this.selectdata.length; i++){
+				const createDate = this.selectdata[i].createDate
+				const department = this.selectdata[i].department
+				const ebs = this.selectdata[i].ebs
+				const endSegment = this.selectdata[i].endSegment
+				const modelType = this.selectdata[i].modelType
+				const modifyDate = this.selectdata[i].modifyDate
+				const name = this.selectdata[i].name
+				const objectID = this.selectdata[i].objectID
+				const startSegment = this.selectdata[i].startSegment
+				const unit = this.selectdata[i].unit
+				const value = this.selectdata[i].value
+				const valueRefer = this.selectdata[i].valueRefer
+				console.log(createDate, department, ebs, endSegment, modelType, modifyDate, name, objectID, startSegment, unit, value, valueRefer)
+				this.queryfileds = [{
+					"createDate": createDate,
+					"department": department,
+					"ebs": ebs,
+					"endSegment": endSegment,
+					"modelType": modelType,
+					"modifyDate": modifyDate,
+					"name": name,
+					"objectID": objectID,
+					"startSegment": startSegment,
+					"unit": unit,
+					"value": value,
+					"valueRefer": valueRefer
+				}]
+				updatebatchinfo(this.queryfileds).then(res => {
+						this.$message({
+							message: "提交成功！",
+							type: 'success'
+						});
+				}).catch(err =>{
+					console.log(err);
+				})
+			}
+		},
+		operateDataInfo() {
+			for(var i = 0; i < this.selectdata.length; i++) {
+				if(this.selectdata.name == '锚杆锚固质量自检'){
+					this.operateFrom.opened = !this.operateFrom.opened;
+					this.operateFrom.operateBrief = this.selectdata
+				}else{
+					this.selectdata[i].edit = true
+				}
+			}
+		},
+		cancelEdit() {
+			console.log(this.searchList,'dsadsadef')
+			for(var i = 0; i < this.searchList.length; i++) {
+				if(this.searchList.name != '锚杆锚固质量自检') {
+				this.searchList[i].edit = false
+				}
+			}
 		},
 		uploadDataInfo() {
 			this.uploadFrom.opened = !this.uploadFrom.opened;
@@ -740,6 +1068,20 @@ export default {
 		qualitiselectWorkInfo() {
 			this.qualitiselectFrom.opened = !this.qualitiselectFrom.opened;
 			this.qualitiselectFrom.qualitiselectBrief = this.searchList[0]
+		},
+		sortChange(column) {
+				console.log(column)
+		},
+		indexMethod(index) {
+			return (this.page - 1) * this.size + index + 1;
+		},
+		handleClick() {
+			if(this.ebscode) {
+				this.getsearch()
+			}
+		},
+		clickchange(row) {
+			row.edit = !row.edit
 		}
 	}
 }
@@ -760,23 +1102,28 @@ export default {
 		color: #303133;
 		font-size: 15px;
 		font-weight: bold;
-		text-align:center;
-		line-height: 40px	;
+		margin-top: 10px;
+		width: 80px;
+	}
+	.select-titlee {
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		margin-top: 10px;
+		width: 80px;
+		margin-left: 15px;
 	}
 	.search-box-handler {
-		width :90%;
-		margin-top: 5px;
+		margin-left: 66px;
+		top: -22px;
+	}
+	.search-box-handlerr {
+		margin-left: 81px;
+		top: -22px;
 	}
 	.certain-button {
 		margin-left: 10px;
 		margin-top: 5px;
-	}
-  .search-list {
-		height: 660px;
-  }
-	.search-result-list {
-		width: 100%;
-		height: 660px;
 	}
 	.block {
 		margin-top: 5px;

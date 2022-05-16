@@ -8,7 +8,7 @@
   >
 	<el-row  :gutter="5">
 		<el-col :span="2.5" :offset="4">
-			<span class="select-title">是否不合格：</span>
+			<span class="select-title">是&emsp;否&emsp;合&emsp;格&emsp;：</span>
 		</el-col>
 		<el-col :span="4">
 			<el-radio v-model="radio" label = "合格" border size="mini">是</el-radio>
@@ -42,7 +42,7 @@
 									type="success"
 									icon="el-icon-upload"
 									@click="submitHandler"
-									>提交</el-button>
+									>保存</el-button>
 								</el-col>
 								<el-col :span="2" :offset="4">
 									<el-button size="small"
@@ -66,7 +66,7 @@ export default {
       default: false
     },
 		operateinfo: {
-				type: Object,
+				type: Array,
 				default:function() {
 				return []
       }
@@ -75,6 +75,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+			selectinfo: {},
 			radio: "",
 			unpasscount: '',
 			unpassadress: '',
@@ -84,10 +85,10 @@ export default {
 	methods: {
 		submitHandler() {
 			if(this.radio === "合格"){
-				this.operateinfo.datainfo = this.radio
+				this.selectinfo.value = this.radio
 			}
 			else if(this.radio === "不合格"){
-				this.operateinfo.datainfo = "不合格数量：" + this.unpasscount + "\xa0\xa0" + "不合格位置：" + this.unpassadress + "\xa0\xa0" + "合格数量：" + this.passcount
+				this.selectinfo.value = "不合格数量：" + this.unpasscount + "\xa0\xa0" + "不合格位置：" + this.unpassadress + "\xa0\xa0" + "合格数量：" + this.passcount
 			}
 			this.dialogVisible = false
 		},
@@ -97,13 +98,13 @@ export default {
 	},
 	computed: {
 		operatetitle() {
-			return this.operateinfo.name + '质量自检'
+			return this.selectinfo.name + '质量自检'
 		}
 	},
   watch: {
     opened() {
       this.dialogVisible = true
-			console.log(this.operateinfo)
+			this.selectinfo = this.operateinfo[0]
     }
   },
 }

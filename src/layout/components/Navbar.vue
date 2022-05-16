@@ -4,7 +4,8 @@
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
-    <div class="right-menu">
+		<div class="text-buttonn"><el-link href="https://portal.ehjedu.cn/cz13b">隧道面板</el-link></div>
+    <!-- <div class="right-menu">
       <template v-if="device!=='mobile'">
         <search id="header-search" class="right-menu-item" />
 
@@ -24,7 +25,7 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <!-- <router-link to="/profile/index">
+          <router-link to="/profile/index">
             <el-dropdown-item>Profile</el-dropdown-item>
           </router-link>
           <router-link to="/">
@@ -35,13 +36,13 @@
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
-          </a> -->
+          </a>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -83,6 +84,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	.text-buttonn{
+		position: absolute;
+		left: 94%;
+		top: 16px;
+	}
+	.el-link.el-link--default {
+		font-size: 15px;
+		font-weight: bold;
+	}
 .navbar {
   height: 50px;
   overflow: hidden;
