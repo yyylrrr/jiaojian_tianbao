@@ -131,15 +131,7 @@
 										</el-table-column>
 										<el-table-column
 										align="center"
-										label="构件编码">
-										</el-table-column>
-										<el-table-column
-										align="center"
-										label="围岩等级">
-										</el-table-column>
-										<el-table-column
-										align="center"
-										prop="workinfo"
+										prop="indexName"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
@@ -305,11 +297,12 @@ export default {
 							for(var j = 0; j < this.firstColumnList[i].children.length; j++)
 							if(item.componentTypeCode == this.firstColumnList[i].children[j].value){
 								item.componentname = this.firstColumnList[i].children[j].label
-								for(var k = 0; k < this.firstColumnList[i].children[j].children.length; k++){
-									if(item.indexName == this.firstColumnList[i].children[j].children[k].value){
-										item.workinfo = this.firstColumnList[i].children[j].children[k].label
-									}
-								}
+								// console.log(this.firstColumnList[i].children[j])
+								// for(var k = 0; k < this.firstColumnList[i].children[j].children.length; k++){
+								// 	if(item.indexName == this.firstColumnList[i].children[j].children[k].value){
+								// 		item.workinfo = this.firstColumnList[i].children[j].children[k].label
+								// 	}
+								// }
 							}
 						}
 					}
@@ -346,8 +339,7 @@ export default {
 			// console.log(this.membervalue.value)
 			// console.log(this.indexvalue.value)
 			// console.log(this.rulevalue)
-			// console.log(this.changevalue)
-			// console.log(this.value)
+			// console.log(this.commentvalue)
 			// console.log(this.info)
 			this.warnrulefileds = {
 				"componentTypeCode": this.membervalue.value,

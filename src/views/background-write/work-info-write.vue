@@ -5,7 +5,7 @@
 				<el-tabs v-model="tabsName" @tab-click="handleClick">
 					<el-tab-pane label="测量队" name="测量队">
 						<el-row>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">隧道类型</dt>
 								<el-select v-model="tunnelvalue" 
 									clearable 
@@ -20,7 +20,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">所属区域</dt>
 								<el-select v-model="regionvalue" 
 									clearable 
@@ -35,7 +35,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
@@ -70,13 +70,28 @@
 								<el-select v-model="circlevalue" 
 									clearable 
 									size="mini"
-									class="search-box-handlerr"
+									class="search-box-handlerrr"
 									@change="confirmcircle">
 									<el-option
 										v-for="item in circleoptions"
 										:key="item.circlevalue"
 										:label="item.circlelabel"
 										:value="item.circlevalue">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titleee">构件类型</dt>
+								<el-select v-model="componentvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerrrr"
+									@change="confirmcomponent">
+									<el-option
+										v-for="item in componentoptions"
+										:key="item.componentvalue"
+										:label="item.componentlabel"
+										:value="item.componentvalue">
 									</el-option>
 								</el-select>
 							</el-col>
@@ -195,7 +210,7 @@
 					</el-tab-pane>
 					<el-tab-pane label="实验室" name="实验室">
 						<el-row>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">隧道类型</dt>
 								<el-select v-model="tunnelvalue" 
 									clearable 
@@ -210,7 +225,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">所属区域</dt>
 								<el-select v-model="regionvalue" 
 									clearable 
@@ -225,7 +240,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
@@ -260,13 +275,28 @@
 								<el-select v-model="circlevalue" 
 									clearable 
 									size="mini"
-									class="search-box-handlerr"
+									class="search-box-handlerrr"
 									@change="confirmcircle">
 									<el-option
 										v-for="item in circleoptions"
 										:key="item.circlevalue"
 										:label="item.circlelabel"
 										:value="item.circlevalue">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titleee">构件类型</dt>
+								<el-select v-model="componentvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerrrr"
+									@change="confirmcomponent">
+									<el-option
+										v-for="item in componentoptions"
+										:key="item.componentvalue"
+										:label="item.componentlabel"
+										:value="item.componentvalue">
 									</el-option>
 								</el-select>
 							</el-col>
@@ -389,7 +419,7 @@
 					</el-tab-pane>
 					<el-tab-pane label="工程部" name="工程部">
 						<el-row>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">隧道类型</dt>
 								<el-select v-model="tunnelvalue" 
 									clearable 
@@ -404,7 +434,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">所属区域</dt>
 								<el-select v-model="regionvalue" 
 									clearable 
@@ -419,7 +449,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
@@ -454,13 +484,28 @@
 								<el-select v-model="circlevalue" 
 									clearable 
 									size="mini"
-									class="search-box-handlerr"
+									class="search-box-handlerrr"
 									@change="confirmcircle">
 									<el-option
 										v-for="item in circleoptions"
 										:key="item.circlevalue"
 										:label="item.circlelabel"
 										:value="item.circlevalue">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titleee">构件类型</dt>
+								<el-select v-model="componentvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerrrr"
+									@change="confirmcomponent">
+									<el-option
+										v-for="item in componentoptions"
+										:key="item.componentvalue"
+										:label="item.componentlabel"
+										:value="item.componentvalue">
 									</el-option>
 								</el-select>
 							</el-col>
@@ -583,7 +628,7 @@
 					</el-tab-pane>
 					<el-tab-pane label="质检部" name="质检部">
 						<el-row>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">隧道类型</dt>
 								<el-select v-model="tunnelvalue" 
 									clearable 
@@ -598,7 +643,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 								<dt class="select-title">所属区域</dt>
 								<el-select v-model="regionvalue" 
 									clearable 
@@ -613,7 +658,7 @@
 									</el-option>
 								</el-select>
 							</el-col>
-							<el-col :span="4">
+							<el-col :span="3">
 									<dt class="select-title">围岩等级</dt>
 								<el-select v-model="legendvalue" 
 									clearable 
@@ -648,13 +693,28 @@
 								<el-select v-model="circlevalue" 
 									clearable 
 									size="mini"
-									class="search-box-handlerr"
+									class="search-box-handlerrr"
 									@change="confirmcircle">
 									<el-option
 										v-for="item in circleoptions"
 										:key="item.circlevalue"
 										:label="item.circlelabel"
 										:value="item.circlevalue">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+									<dt class="select-titleee">构件类型</dt>
+								<el-select v-model="componentvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handlerrrr"
+									@change="confirmcomponent">
+									<el-option
+										v-for="item in componentoptions"
+										:key="item.componentvalue"
+										:label="item.componentlabel"
+										:value="item.componentvalue">
 									</el-option>
 								</el-select>
 							</el-col>
@@ -827,18 +887,66 @@ export default {
 			factorvalue:'',
 			circleoptions: [{
 				circlevalue: '01',
-				circlelabel: '初支开挖'
+				circlelabel: '初支开挖',
+				children: [{
+					componentvalue: '01',
+					componentlabel: '喷混模型',
+				},{
+					componentvalue: '02',
+					componentlabel: '拱架模型',
+				},{
+					componentvalue: '03',
+					componentlabel: '小导管模型',
+				},{
+					componentvalue: '04',
+					componentlabel: '管棚模型',
+				},{
+					componentvalue: '05',
+					componentlabel: '锚杆模型',
+				}]
 			},{
 				circlevalue: '02',
-				circlelabel: '仰拱'
+				circlelabel: '仰拱',
+				children: [{
+					componentvalue: '01',
+					componentlabel: '仰拱（底板）模型',
+				},{
+					componentvalue: '02',
+					componentlabel: '仰拱填充模型',
+				}]
 			},{
 				circlevalue: '03',
-				circlelabel: '二衬'
+				circlelabel: '二衬',
+				children: [{
+					componentvalue: '04',
+					componentlabel: '拱墙衬砌模型',
+				}]
 			},{
 				circlevalue: '04',
-				circlelabel: '防、排水'
+				circlelabel: '防、排水',
+				children: [{
+					componentvalue: '01',
+					componentlabel: '排水盲管模型',
+				},{
+					componentvalue: '02',
+					componentlabel: '洞内排水沟模型',
+				},{
+					componentvalue: '03',
+					componentlabel: '检查井模型',
+				},{
+					componentvalue: '04',
+					componentlabel: '泄水洞模型',
+				},{
+					componentvalue: '05',
+					componentlabel: '隧底深埋排水沟模型',
+				},{
+					componentvalue: '06',
+					componentlabel: '接口工程预埋',
+				}]
 			}],
 			circlevalue: '',
+			componentoptions:[],
+			componentvalue:'',
 			searchList: [],
 			tabsName: '测量队',
 			selectdata: [],
@@ -909,10 +1017,19 @@ export default {
 
 		getregiontype(item) {
       if (!item) {
-
+				this.regionvalue = ''
+				this.factorvalue = ''
+				this.legendvalue = ''
+				this.circlevalue = ''
+				this.componentvalue = ''
         return
       }
 			getregion(item).then(res => {
+				this.regionvalue = ''
+				this.factorvalue = ''
+				this.legendvalue = ''
+				this.circlevalue = ''
+				this.componentvalue = ''
 				this.regionoptions = res.data;
 			}).catch(err =>{
 				console.log(err);
@@ -921,10 +1038,17 @@ export default {
 
 		getfactortype(item) {
       if (!item) {
-
+				this.factorvalue = ''
+				this.legendvalue = ''
+				this.circlevalue = ''
+				this.componentvalue = ''
         return
       }
 			getmileageSection(item).then(res => {
+				this.factorvalue = ''
+				this.legendvalue = ''
+				this.circlevalue = ''
+				this.componentvalue = ''
 				this.setlegened = res.data;
 			}).catch(err =>{
 				console.log(err);
@@ -933,9 +1057,14 @@ export default {
 
 		getlegendtype(item) {
 			if (!item) {
-
+				this.factorvalue = ''
+				this.circlevalue = ''
+				this.componentvalue = ''
         return
       } else {
+				this.factorvalue = ''
+				this.circlevalue = ''
+				this.componentvalue = ''
 				this.legendoptions.levle = item
 				this.factoroptions = this.setlegened.filter(item => item.code.substr(8,2) == this.legendoptions.levle)
 			}
@@ -943,19 +1072,35 @@ export default {
 
 		confirmfactor(item) {
       if (!item) {
-
+				this.circlevalue = ''
+				this.componentvalue = ''
         return
       } else {
+				this.circlevalue = ''
+				this.componentvalue = ''
 				this.factoroptions.code = item
 			}
 		},
 
 		confirmcircle(item) {
       if (!item) {
+				this.componentvalue = ''
+        return
+			} else {
+				this.componentvalue = ''
+				this.circleoptions.code = item
+				this.componentoptions = this.circleoptions.find(item => item.circlevalue == this.circleoptions.code).children
+				// console.log(this.componentoptions)
+			}			
+		},
+
+		confirmcomponent(item) {
+      if (!item) {
 
         return
 			} else {
-				this.circleoptions.code = item
+				this.componentoptions.code = item
+				// console.log(this.componentoptions.code)
 			}			
 		},
 		
@@ -964,14 +1109,15 @@ export default {
 		},
 
 		getsearch() {
-			if(this.factoroptions.code != undefined && this.circleoptions.code != undefined){
+			if(this.factoroptions.code != undefined && this.circleoptions.code != undefined && this.componentoptions.code != undefined){
 				const str1 = this.factoroptions.code.substr(0,2)
 				const str2 = this.factoroptions.code.substr(2,2)
 				const str3 = this.factoroptions.code.substr(4,2)
 				const str4 = this.factoroptions.code.substr(6,2)
 				const str5 = this.factoroptions.code.substr(8,2)
 				const str6 = this.factoroptions.code.substr(10,3)
-				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6 + '-' + this.circleoptions.code
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6 + '-' + this.circleoptions.code + '-' + this.componentoptions.code
+				console.log(this.ebscode)
 			}
 			getpageQuery(this.tabsName, this.ebscode, this.page, this.size).then(res => {
 				this.totalpage = res.detail.totalCount
@@ -1103,6 +1249,7 @@ export default {
 		font-size: 15px;
 		font-weight: bold;
 		margin-top: 10px;
+		margin-left: 10px;
 		width: 80px;
 	}
 	.select-titlee {
@@ -1111,18 +1258,34 @@ export default {
 		font-weight: bold;
 		margin-top: 10px;
 		width: 80px;
-		margin-left: 15px;
+		margin-left: 5px;
+	}
+	.select-titleee{
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		margin-top: 10px;
+		width: 80px;
+		margin-left: -15px;
 	}
 	.search-box-handler {
-		margin-left: 66px;
+		margin-left: 75px;
 		top: -22px;
 	}
 	.search-box-handlerr {
-		margin-left: 81px;
+		margin-left: 90px;
+		top: -22px;
+	}
+	.search-box-handlerrr {
+		margin-left: 70px;
+		top: -22px;
+	}
+	.search-box-handlerrrr{
+		margin-left: 50px;
 		top: -22px;
 	}
 	.certain-button {
-		margin-left: 10px;
+		margin-left: -35px;
 		margin-top: 5px;
 	}
 	.block {
