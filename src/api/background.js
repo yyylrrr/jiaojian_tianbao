@@ -98,11 +98,13 @@ export function deletewarninfo(objectID) {
 }
 
 //分页查询预警信息
-export function getwarninfoQuery(orderByCreateDate, page, size) {
+export function getwarninfoQuery(department, ebsStr, orderByCreateDate, page, size) {
 	return request({
 		url: 'https://portal.ehjedu.cn/arcgisService/warningInfo/pageQuery',
 		method: 'get',
 		params: {
+			department: department,
+			ebsStr: ebsStr,
 			orderByCreateDate : orderByCreateDate,
 			page: page,
 			size: size

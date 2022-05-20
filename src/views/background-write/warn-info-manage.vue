@@ -120,7 +120,8 @@
 										</el-table-column>
 										<el-table-column
 										align="center"
-										label="构件名称">
+										label="构件名称"
+										prop="componentTypeName">
 										</el-table-column>
 										<el-table-column
 										align="center"
@@ -923,7 +924,8 @@ export default {
 				const str5 = this.factoroptions.code.substr(8,2)
 				const str6 = this.factoroptions.code.substr(10,3)
 				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6 + '-' + this.circleoptions.code + '-' + this.componentoptions.code
-				console.log(this.ebscode)
+				// console.log(this.ebscode)
+				this.getwarninfo()
 			}
 			// getpageQuery(this.tabsName, this.ebscode, this.page, this.size).then(res => {
 			// 	this.totalpage = res.detail.totalCount
@@ -962,7 +964,7 @@ export default {
 
 		},
 		getwarninfo() {
-			getwarninfoQuery(true, this.page, this.size).then(res => {
+			getwarninfoQuery(this.tabsName, this.ebscode, true, this.page, this.size).then(res => {
 				this.totalpage = res.detail.totalCount
 				this.warninfolist = res.data.map(item =>{
 					var date = new Date(item.createDate).toJSON();

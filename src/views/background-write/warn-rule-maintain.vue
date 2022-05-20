@@ -69,25 +69,11 @@
 							</el-col>
 						</el-row>
 						<el-row>
-							<el-col :span="6">
-								<dt class="select-title">对比规则:</dt>
-								<el-select v-model="changevalue" 
-									clearable 
-									size="mini"
-									class="search-box-handler">
-									<el-option
-										v-for="item in changeList"
-										:key="item.value"
-										:label="item.label"
-										:value="item.value">
-									</el-option>									
-								</el-select>
-							</el-col>
-							<el-col :span="6">
+							<el-col :span="9">
 								<dt class="select-title">超出值/百分比:</dt>
 								<el-input v-model="commentvalue" size="mini" class="valueinput" placeholder="请输入内容"></el-input>
 							</el-col>
-							<el-col :span="12">
+							<el-col :span="15">
 									<dt class="select-title">预警内容编辑:</dt>
 									<el-input v-model="info" size="mini" class="infoinput" placeholder="请输入内容"></el-input>
 							</el-col>
@@ -436,12 +422,12 @@ export default {
 		justify-content:center;
 	}
 	.valueinput {
-		width: 52%;
+		width: 70%;
 		margin-left: 100px;
 		top: -35px;
 	}
 	.infoinput {
-		width: 77%;
+		width: 81%;
 		margin-left: 98px;
 		top: -35px;
 	}
