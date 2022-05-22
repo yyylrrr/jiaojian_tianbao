@@ -858,7 +858,7 @@ import QualitiselectDiolog from './components/QualitiselectDiolog.vue'
 import { gettunnel, getregion, getmileageSection, getpageQuery, updatebatchinfo } from '@/api/background.js'
 
 export default {
-	name: '',
+	name: 'work-info-write',
 	components: {
 		OperateDiolog,
 		UploadDiolog,

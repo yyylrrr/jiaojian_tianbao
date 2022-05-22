@@ -178,7 +178,7 @@ import AddWarnDiolog from './components/AddWarnDiolog'
 import { savewarnrule, getwarnQuery, deletewarnrule } from '@/api/background.js'
 
 export default {
-	name: '',
+	name: 'warn-rule-maintain',
 	components: {
 		AddWarnDiolog,
 	},
@@ -202,7 +202,94 @@ export default {
 			commentvalue:'',
 			info:'',
       dialogVisible: false,
-			firstColumnList: [],
+			firstColumnList: [{
+				"label": "初支开挖",
+				"value": "01",
+				"children": [{
+					"label": "喷混模型",
+					"value": "01",
+					"children":[{
+						"label": "实际喷射厚度",
+						"value": "实际喷射厚度"
+					},{
+						"label": "初支回弹检测强度",
+						"value": "初支回弹检测强度"
+					},{
+						"label": "实际喷射放量",
+						"value": "实际喷射放量"
+					}]
+				},{
+					"label": "小导管模型",
+					"value": "03",
+					"children":[{
+						"label": "注浆量",
+						"value": "1"	
+					}]
+				},{
+					"label": "管棚模型",
+					"value": "管棚模型",
+					"children":[{
+						"label": "实际管棚长度",
+						"value": "实际管棚长度"			
+					},{
+						"label": "注浆量",
+						"value": "注浆量"		
+					}]
+				},{
+					"label": "锚杆模型",
+					"value": "05",
+					"children":[{
+						"label": "浆体密实度",
+						"value": "浆体密实度"		
+					}]
+				}]
+			},{
+				"label": "仰拱",
+				"value":"02",
+				"children": [{
+					"label": "仰拱（底板）模型",
+					"value": "01",
+					"children": [{
+						"label": "4d、7d同养混凝土试块强度",
+						"value": "4d、7d同养混凝土试块强度"			
+					},{
+						"label": "混凝土实际浇筑量",
+						"value": "混凝土实际浇筑量"			
+					}]
+				}]
+			},{
+				"label": "二衬",
+				"value":"03",
+				"children": [{
+					"label": "拱墙衬砌模型",
+					"value": "01",
+					"children":[
+						{
+							"label": "4d、7d同养混凝土试块强度",
+							"value": "4d、7d同养混凝土试块强度"			
+						},{
+							"label": "混凝土实际浇筑量",
+							"value": "混凝土实际浇筑量"				
+						},{
+							"label": "二衬外观质量",
+							"value": "二衬外观质量"				
+						},{
+							"label": "二衬质量自评价",
+							"value": "二衬质量自评价"			
+						}]		
+				}]
+			},{
+				"label": "防、排水",
+				"value":"04",
+				"children": [{
+					"label": "洞内排水沟模型",
+					"value": "02",
+					"children":[{
+						"label": "外观质量",
+						"value": "外观质量"
+					}]	
+				}]
+			}],
 			secondColumnList: [],
 			thirdColumnList: [],
 			ruleList:[{
@@ -252,7 +339,7 @@ export default {
 
 	created() {
 		this.getwarnrule();
-		this.loadData();
+		// this.loadData();
 	},
 	methods: {
 		handleSelectionChange(val) {
@@ -273,16 +360,23 @@ export default {
 			return (this.page - 1) * this.size + index + 1;
 		},
 		getwarnrule() {
-			getwarnQuery(this.page, this.size).then(res => {
+			 getwarnQuery(this.page, this.size).then(res => {
 				this.totalpage = res.detail.totalCount
-				this.warnruleList = res.data.map(item =>{
+				this.changewarnrule(res.data)
+				// console.log(this.warnruleList,this.firstColumnList,'测试')
+			}).catch(err =>{
+				console.log(err);
+			})
+		},
+		changewarnrule(ruleinfo) {
+				this.warnruleList = ruleinfo.map(item =>{
 					// item.componentname = this.datalist[parseInt(item.scopeCode)-1].children[parseInt(item.componentTypeCode)-1].label
 					// item.workinfo = this.datalist[parseInt(item.scopeCode)-1].children[parseInt(item.componentTypeCode)-1].children[parseInt(item.indexName)-1].label
 					for(var i = 0; i < this.firstColumnList.length; i++){
 						if(item.scopeCode == this.firstColumnList[i].value){
 							for(var j = 0; j < this.firstColumnList[i].children.length; j++)
-							if(item.componentTypeCode == this.firstColumnList[i].children[j].value){
-								item.componentname = this.firstColumnList[i].children[j].label
+							 if(item.componentTypeCode == this.firstColumnList[i].children[j].value){
+								 item.componentname = this.firstColumnList[i].children[j].label
 								// console.log(this.firstColumnList[i].children[j])
 								// for(var k = 0; k < this.firstColumnList[i].children[j].children.length; k++){
 								// 	if(item.indexName == this.firstColumnList[i].children[j].children[k].value){
@@ -295,10 +389,6 @@ export default {
 					item.warnrule = item.rule.replace(/数值/g,item.value)
 					return item;
 				})
-				// console.log(this.warnruleList,this.firstColumnList,'测试')
-			}).catch(err =>{
-				console.log(err);
-			})
 		},
 		deletewarnrule() {
 			for(var i = 0; i < this.selectdata.length; i++){
@@ -310,16 +400,16 @@ export default {
 				})
 			}
 		},
-		loadData() {
-      axios
-        .request({
-          url: '/warn-rule.json',
-          method: 'get'
-        }).then((res) => {
-					this.firstColumnList = res.data
-					// console.log(this.firstColumnList)
-				})
-		},
+		// loadData() {
+    //   axios
+    //     .request({
+    //       url: '/warn-rule.json',
+    //       method: 'get'
+    //     }).then((res) => {
+		// 			this.firstColumnList = res.data
+		// 			// console.log(this.firstColumnList)
+		// 		})
+		// },
 		submitHandler() {
 			// console.log(this.scopevalue.value)
 			// console.log(this.membervalue.value)

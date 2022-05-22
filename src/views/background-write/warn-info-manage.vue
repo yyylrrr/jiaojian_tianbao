@@ -289,6 +289,7 @@
 										height="700"
 										style="width: 100%"
 										border
+										:data="warninfolist"
 										@selection-change="handleSelectionChange"
 										@sort-change='sortChange'
 										>
@@ -296,36 +297,44 @@
 										align="center"
 										type = "index"
 										label= "序号"
+										:index="indexMethod"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										label="构件名称">
+										label="构件名称"
+										prop="componentTypeName">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="surroundRockGrade"
 										label="围岩等级">
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
 										align="center"
+										prop="startSegment"
 										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="endSegment"
 										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="warningInfo"
 										label="实时预警详情">
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
 										align="center"
+										prop="modifyCreatDate"
 										label="预警时间">
 										</el-table-column>
 										<el-table-column
@@ -462,6 +471,7 @@
 										height="700"
 										style="width: 100%"
 										border
+										:data="warninfolist"
 										@selection-change="handleSelectionChange"
 										@sort-change='sortChange'
 										>
@@ -469,36 +479,44 @@
 										align="center"
 										type = "index"
 										label= "序号"
+										:index="indexMethod"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										label="构件名称">
+										label="构件名称"
+										prop="componentTypeName">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="surroundRockGrade"
 										label="围岩等级">
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
 										align="center"
+										prop="startSegment"
 										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="endSegment"
 										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="warningInfo"
 										label="实时预警详情">
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
 										align="center"
+										prop="modifyCreatDate"
 										label="预警时间">
 										</el-table-column>
 										<el-table-column
@@ -635,6 +653,7 @@
 										height="700"
 										style="width: 100%"
 										border
+										:data="warninfolist"
 										@selection-change="handleSelectionChange"
 										@sort-change='sortChange'
 										>
@@ -642,36 +661,44 @@
 										align="center"
 										type = "index"
 										label= "序号"
+										:index="indexMethod"
 										width="60">
 										</el-table-column>
 										<el-table-column
 										align="center"
-										label="构件名称">
+										label="构件名称"
+										prop="componentTypeName">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="surroundRockGrade"
 										label="围岩等级">
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
 										align="center"
+										prop="startSegment"
 										label="起始里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="endSegment"
 										label="终止里程">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="name"
 										label="施工信息">
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="warningInfo"
 										label="实时预警详情">
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
 										align="center"
+										prop="modifyCreatDate"
 										label="预警时间">
 										</el-table-column>
 										<el-table-column
@@ -715,6 +742,8 @@
 import { gettunnel, getregion, getmileageSection, getwarninfoQuery, deletewarninfo} from '@/api/background.js'
 
 export default {
+	name: 'warn-info-manage',
+
 	data() {
 		return{
 			tunneloptions: [],
@@ -958,7 +987,7 @@ export default {
 			this.getwarninfo()
     },
 		handleClick(){
-
+			this.getwarninfo()
 		},
 		sortChange(column) {
 
