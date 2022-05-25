@@ -31,16 +31,17 @@ export function getmileageSection(regionCode) {
 }
 
 //分页查询构建属性
-export function getpageQuery(department, ebsStr, page, size, sortByStartMileage) {
+export function getpageQuery(department, direction, ebsStr, orderBy, page, size) {
 	return request({
 		url: 'https://portal.ehjedu.cn/arcgisService/addProperty/pageQuery',
 		method: 'get',
 		params: {
 			department: department,
+			direction: direction,
 			ebsStr: ebsStr,
+			orderBy: orderBy,
 			page: page,
-			size: size,
-			sortByStartMileage: sortByStartMileage
+			size: size
 		}
 	})
 }
@@ -98,14 +99,15 @@ export function deletewarninfo(objectID) {
 }
 
 //分页查询预警信息
-export function getwarninfoQuery(department, ebsStr, orderByCreateDate, page, size) {
+export function getwarninfoQuery(department,direction, ebsStr, orderBy, page, size) {
 	return request({
 		url: 'https://portal.ehjedu.cn/arcgisService/warningInfo/pageQuery',
 		method: 'get',
 		params: {
 			department: department,
+			direction: direction,
 			ebsStr: ebsStr,
-			orderByCreateDate : orderByCreateDate,
+			orderBy: orderBy,
 			page: page,
 			size: size
 		}

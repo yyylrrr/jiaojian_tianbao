@@ -748,81 +748,14 @@ export default {
 		return{
 			tunneloptions: [],
 			tunnelvalue:'',
-			legendoptions: [{
-				legendvalue: '01',
-				legendlabel: 'Ⅲ级'
-			},{
-				legendvalue: '02',
-				legendlabel: 'Ⅳ级'				
-			},{
-				legendvalue: '03',
-				legendlabel: 'Ⅴ级'
-			}],
+			legendoptions: [],
 			legendvalue:'',
 			regionoptions: [],
 			regionvalue:'',
 			factoroptions: [],
 			setlegened: [],
 			factorvalue:'',
-			circleoptions: [{
-				circlevalue: '01',
-				circlelabel: '初支开挖',
-				children: [{
-					componentvalue: '01',
-					componentlabel: '喷混模型',
-				},{
-					componentvalue: '02',
-					componentlabel: '拱架模型',
-				},{
-					componentvalue: '03',
-					componentlabel: '小导管模型',
-				},{
-					componentvalue: '04',
-					componentlabel: '管棚模型',
-				},{
-					componentvalue: '05',
-					componentlabel: '锚杆模型',
-				}]
-			},{
-				circlevalue: '02',
-				circlelabel: '仰拱',
-				children: [{
-					componentvalue: '01',
-					componentlabel: '仰拱（底板）模型',
-				},{
-					componentvalue: '02',
-					componentlabel: '仰拱填充模型',
-				}]
-			},{
-				circlevalue: '03',
-				circlelabel: '二衬',
-				children: [{
-					componentvalue: '04',
-					componentlabel: '拱墙衬砌模型',
-				}]
-			},{
-				circlevalue: '04',
-				circlelabel: '防、排水',
-				children: [{
-					componentvalue: '01',
-					componentlabel: '排水盲管模型',
-				},{
-					componentvalue: '02',
-					componentlabel: '洞内排水沟模型',
-				},{
-					componentvalue: '03',
-					componentlabel: '检查井模型',
-				},{
-					componentvalue: '04',
-					componentlabel: '泄水洞模型',
-				},{
-					componentvalue: '05',
-					componentlabel: '隧底深埋排水沟模型',
-				},{
-					componentvalue: '06',
-					componentlabel: '接口工程预埋',
-				}]
-			}],
+			circleoptions: [],
 			circlevalue: '',
 			componentoptions:[],
 			componentvalue:'',
@@ -832,7 +765,9 @@ export default {
 			size: 10,
 			page: 1,
 			selectdata: [],
-			warninfolist: []
+			warninfolist: [],
+			direction: true,
+			orderBy: "startSegment"
 		}
 	},
 
@@ -885,6 +820,16 @@ export default {
 				this.circlevalue = ''
 				this.componentvalue = ''
 				this.setlegened = res.data;
+				this.legendoptions= [{
+					legendvalue: '01',
+					legendlabel: 'Ⅲ级'
+				},{
+					legendvalue: '02',
+					legendlabel: 'Ⅳ级'				
+				},{
+					legendvalue: '03',
+					legendlabel: 'Ⅴ级'
+				}]
 			}).catch(err =>{
 				console.log(err);
 			})
@@ -914,6 +859,65 @@ export default {
 				this.circlevalue = ''
 				this.componentvalue = ''
 				this.factoroptions.code = item
+				this.circleoptions= [{
+					circlevalue: '01',
+					circlelabel: '初支开挖',
+					children: [{
+						componentvalue: '01',
+						componentlabel: '喷混模型',
+					},{
+						componentvalue: '02',
+						componentlabel: '拱架模型',
+					},{
+						componentvalue: '03',
+						componentlabel: '小导管模型',
+					},{
+						componentvalue: '04',
+						componentlabel: '管棚模型',
+					},{
+						componentvalue: '05',
+						componentlabel: '锚杆模型',
+					}]
+				},{
+					circlevalue: '02',
+					circlelabel: '仰拱',
+					children: [{
+						componentvalue: '01',
+						componentlabel: '仰拱（底板）模型',
+					},{
+						componentvalue: '02',
+						componentlabel: '仰拱填充模型',
+					}]
+				},{
+					circlevalue: '03',
+					circlelabel: '二衬',
+					children: [{
+						componentvalue: '04',
+						componentlabel: '拱墙衬砌模型',
+					}]
+				},{
+					circlevalue: '04',
+					circlelabel: '防、排水',
+					children: [{
+						componentvalue: '01',
+						componentlabel: '排水盲管模型',
+					},{
+						componentvalue: '02',
+						componentlabel: '洞内排水沟模型',
+					},{
+						componentvalue: '03',
+						componentlabel: '检查井模型',
+					},{
+						componentvalue: '04',
+						componentlabel: '泄水洞模型',
+					},{
+						componentvalue: '05',
+						componentlabel: '隧底深埋排水沟模型',
+					},{
+						componentvalue: '06',
+						componentlabel: '接口工程预埋',
+					}]
+				}]
 			}
 		},
 
@@ -945,34 +949,55 @@ export default {
 		},
 
 		getsearch() {
-			if(this.factoroptions.code != undefined && this.circleoptions.code != undefined && this.componentoptions.code != undefined){
-				const str1 = this.factoroptions.code.substr(0,2)
-				const str2 = this.factoroptions.code.substr(2,2)
-				const str3 = this.factoroptions.code.substr(4,2)
-				const str4 = this.factoroptions.code.substr(6,2)
-				const str5 = this.factoroptions.code.substr(8,2)
-				const str6 = this.factoroptions.code.substr(10,3)
-				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6 + '-' + this.circleoptions.code + '-' + this.componentoptions.code
+			if(this.tunnelvalue != '' && this.regionvalue == ''){
+				const str1 = this.tunnelvalue.substr(0,2)
+				const str2 = this.tunnelvalue.substr(2,2)
+				const str3 = this.tunnelvalue.substr(4,2)
+				this.ebscode = str1 + '-' + str2 + '-' + str3
 				// console.log(this.ebscode)
-				this.getwarninfo()
+			}else if(this.regionvalue != '' && this.legendvalue == '' ){
+				const str1 = this.regionvalue.substr(0,2)
+				const str2 = this.regionvalue.substr(2,2)
+				const str3 = this.regionvalue.substr(4,2)
+				const str4 = this.regionvalue.substr(6,2)
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4
+				// console.log(this.ebscode)
+			}else if(this.legendvalue != '' && this.factorvalue == ''){
+				const str1 = this.regionvalue.substr(0,2)
+				const str2 = this.regionvalue.substr(2,2)
+				const str3 = this.regionvalue.substr(4,2)
+				const str4 = this.regionvalue.substr(6,2)
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + this.legendvalue
+				// console.log(this.ebscode)
+			}else if(this.factorvalue != '' && this.circlevalue == ''){
+				const str1 = this.factorvalue.substr(0,2)
+				const str2 = this.factorvalue.substr(2,2)
+				const str3 = this.factorvalue.substr(4,2)
+				const str4 = this.factorvalue.substr(6,2)
+				const str5 = this.factorvalue.substr(8,2)
+				const str6 = this.factorvalue.substr(10,3)
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6
+				// console.log(this.ebscode)
+			}else if(this.circlevalue != '' && this.componentvalue == ''){
+				const str1 = this.factorvalue.substr(0,2)
+				const str2 = this.factorvalue.substr(2,2)
+				const str3 = this.factorvalue.substr(4,2)
+				const str4 = this.factorvalue.substr(6,2)
+				const str5 = this.factorvalue.substr(8,2)
+				const str6 = this.factorvalue.substr(10,3)
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6+ '-' + this.circlevalue
+				// console.log(this.ebscode)
+			}else if(this.componentvalue != ''){
+				const str1 = this.factorvalue.substr(0,2)
+				const str2 = this.factorvalue.substr(2,2)
+				const str3 = this.factorvalue.substr(4,2)
+				const str4 = this.factorvalue.substr(6,2)
+				const str5 = this.factorvalue.substr(8,2)
+				const str6 = this.factorvalue.substr(10,3)
+				this.ebscode = str1 + '-' + str2 + '-' + str3 + '-' + str4 + '-' + str5 + '-' + str6+ '-' + this.circlevalue + '-' + this.componentvalue
+				// console.log(this.ebscode)
 			}
-			// getpageQuery(this.tabsName, this.ebscode, this.page, this.size).then(res => {
-			// 	this.totalpage = res.detail.totalCount
-			// 	this.searchList = res.data.map(item =>{
-			// 		item.edit = false;
-			// 		// item.createDate = 111;
-			// 		//0001-01-01T01:15:32.000+00:00
-			// 		// var date = item.createDate.substr(0,10)
-			// 		// var time = item.createDate.substr(11,8)
-			// 		// item.modifyCreatDate = date + ' ' + time
-			// 		var date = new Date(item.createDate).toJSON();
-			// 		item.modifyCreatDate = new Date(+new Date(date)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')  
-			// 		return item;
-			// 	})
-			// 	console.log(this.searchList)
-			// }).catch(err =>{
-			// 	console.log(err);
-			// })
+			this.getwarninfo()	
 		},
 		handleSelectionChange(val) {
 			this.selectdata = val
@@ -987,13 +1012,37 @@ export default {
 			this.getwarninfo()
     },
 		handleClick(){
+			console.log(this.tabsName)
 			this.getwarninfo()
 		},
 		sortChange(column) {
-
+			console.log(column.order)
+			if(column.prop == 'startSegment'){
+				if(column.order == 'ascending' || column.order == null){
+					this.direction = true
+					this.orderBy = 'startSegment'
+					this.getwarninfo()
+				}else{
+					this.direction = false
+					this.orderBy = 'startSegment'
+					this.getwarninfo()				
+				}
+			}else{
+				if(column.prop == 'modifyCreatDate'){
+					if(column.order == 'ascending' || column.order == null){
+						this.direction = true
+						this.orderBy = 'modifyDate'
+						this.getwarninfo()
+					}else{
+						this.direction = false
+						this.orderBy = 'modifyDate'
+						this.getwarninfo()		
+					}
+				}				
+			}
 		},
 		getwarninfo() {
-			getwarninfoQuery(this.tabsName, this.ebscode, true, this.page, this.size).then(res => {
+			getwarninfoQuery(this.tabsName,this.direction, this.ebscode, this.orderBy, this.page, this.size).then(res => {
 				this.totalpage = res.detail.totalCount
 				this.warninfolist = res.data.map(item =>{
 					var date = new Date(item.createDate).toJSON();
