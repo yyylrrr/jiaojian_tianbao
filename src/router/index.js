@@ -102,6 +102,15 @@ export const constantRoutes = [
         }
       },
       {
+        path: 'czbusiness/work-manage',
+        component: () => import('@/views/background-write/work-manage'),
+        name: 'work-manage',
+        meta: {
+          title: '检测报告管理',
+					icon: 'documentation'
+        }
+      },
+      {
         path: 'czbusiness/warn-info-manage',
         component: () => import('@/views/background-write/warn-info-manage'),
         name: 'warn-info-manage',
@@ -116,15 +125,6 @@ export const constantRoutes = [
         name: 'warn-rule-maintain',
         meta: {
           title: '预警规则维护',
-					icon: 'documentation'
-        }
-      },
-      {
-        path: 'czbusiness/work-manage',
-        component: () => import('@/views/background-write/work-manage'),
-        name: 'work-manage',
-        meta: {
-          title: '施工进度管理',
 					icon: 'documentation'
         }
       }

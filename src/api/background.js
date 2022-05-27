@@ -113,3 +113,35 @@ export function getwarninfoQuery(department,direction, ebsStr, orderBy, page, si
 		}
 	})
 }
+
+//保存超前地质勘探节点
+export function savereport(reportfileds) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportInfo/save',
+    method: 'post',
+    data:reportfileds
+  })
+}
+
+//返回超前地质勘探报告分页
+export function getreportQuery(page,size,sortType,sortableFields) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportInfo/pageQuery',
+    method: 'get',
+		params: {
+			page: page,
+			size: size,
+			sortType: sortType,
+			sortableFields: sortableFields
+		}
+  })
+}
+
+//deleteReportInfo
+export function deleteReportInfo(ids) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportInfo/delete',
+    method: 'delete',
+		data:ids
+  })
+}

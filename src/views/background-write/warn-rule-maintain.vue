@@ -5,11 +5,11 @@
   <el-dialog
     title='新增预警'
     :visible.sync="opened"
-    width="60%"
+    width="42%"
 		center
   >
 						<el-row>
-							<el-col :span="6">
+							<el-col :span="8">
 								<dt class="select-title">所属范围:</dt>
 								<el-select v-model="scopevalue" 
 									clearable 
@@ -24,7 +24,7 @@
 									</el-option>									
 								</el-select>
 							</el-col>
-							<el-col :span="6">
+							<el-col :span="8">
 								<dt class="select-title">构件选择:</dt>
 								<el-select v-model="membervalue" 
 									clearable 
@@ -39,7 +39,7 @@
 									</el-option>	
 								</el-select>
 							</el-col>
-							<el-col :span="6">
+							<el-col :span="8">
 									<dt class="select-title">指标选择:</dt>
 								<el-select v-model="indexvalue" 
 									clearable 
@@ -53,30 +53,79 @@
 									</el-option>	
 								</el-select>
 							</el-col>
-							<el-col :span="6">
+						</el-row>
+						<el-row>
+							<el-col :span="8">
 									<dt class="select-title">规则模板:</dt>
-								<el-select v-model="rulevalue" 
+								<el-select v-model="rulevalue1" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handlerr">
 									<el-option
-										v-for="item in ruleList"
+										v-for="item in ruleList1"
 										:key="item.value"
 										:label="item.label"
 										:value="item.value">
 									</el-option>
 								</el-select>
 							</el-col>
+							<el-col :span="8">
+								<dt class="select-titlee">&</dt>
+								<el-select v-model="rulevalue2" 
+									clearable 
+									size="mini"
+									class="search-box-handlerrr">
+									<el-option
+										v-for="item in ruleList2"
+										:key="item.value"
+										:label="item.label"
+										:value="item.value">
+									</el-option>
+								</el-select>
+							</el-col>
+							<el-col :span="4">
+								<dt class="select-titleee">数值①：</dt>
+								<el-input v-model="commentvalue1" size="mini" class="valueinput1" placeholder="数值①"></el-input>
+							</el-col>
+							<el-col :span="4">
+								<dt class="select-titleeee">数值②：</dt>
+								<el-input v-model="commentvalue2" size="mini" class="valueinput2" placeholder="数值②"></el-input>
+							</el-col>
 						</el-row>
 						<el-row>
-							<el-col :span="9">
-								<dt class="select-title">超出值/百分比:</dt>
-								<el-input v-model="commentvalue" size="mini" class="valueinput" placeholder="请输入内容"></el-input>
-							</el-col>
-							<el-col :span="15">
-									<dt class="select-title">预警内容编辑:</dt>
+							<el-col :span="24">
+									<dt class="select-title">预警内容:</dt>
 									<el-input v-model="info" size="mini" class="infoinput" placeholder="请输入内容"></el-input>
 							</el-col>
+						</el-row>
+						<el-row>
+<el-form :model="warnPeopleForm_one" ref="warnPeopleFormRef_one" :show-close="true">
+    <el-row v-for="(item,index) in warnPeopleForm_one.object" :key="index">
+        <el-col :span="8">
+            <el-form-item :prop="'object.' + index + '.username'" label="关联管理角色："  label-width="110px" style="margin-left: -3px;">
+							<el-select size="mini" v-model="item.username" style="width:250px;margin-left:-15px;" placeholder="请选择">
+								<el-option
+									v-for="item in options"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
+            </el-form-item>
+        </el-col>
+        <el-col :span="8">
+            <el-form-item :prop="'object.' + index + '.phone_number'" label="关联管理人：" label-width="100px" style="margin-left: 90px;">
+                <el-input size="mini" type="text" v-model="item.phone_number" style="width:250px;margin-left: -20px;"></el-input>
+            </el-form-item>
+        </el-col>
+        <el-col :span="1">
+            <el-button style="margin-top:4px;margin-left:175px;" type="success" plain round circle size="mini" v-if=" index == warnPeopleForm_one.object.length - 1 " :v-show="warnPeopleForm_one.object[index] == ''? false:true" @click="addSender_1()" class="el-icon-circle-plus"></el-button>
+        </el-col>
+        <el-col :span="1">
+						<el-button style="margin-top:4px;margin-left:175px;" type="danger" size="mini" plain round circle v-if="warnPeopleForm_one.object.length > 1" @click="removeSender_1(index)" class="el-icon-remove"></el-button>
+        </el-col>
+    </el-row>
+</el-form>
 						</el-row>
 						<div class="button-group">
 							<el-button size="small"
@@ -132,6 +181,11 @@
 										</el-table-column>
 										<el-table-column
 										align="center"
+										prop="manageMember"
+										label="管理角色及管理人">
+										</el-table-column>
+										<el-table-column
+										align="center"
 										label="操作"
 										width="120"
 										type="selection">
@@ -168,27 +222,33 @@
 						</el-row>
 				</el-card>
 	</div>
-	<!-- <AddWarnDiolog :opened="AddWarnFrom.opened"></AddWarnDiolog> -->
 </div>
 </template>
 
 <script>
-import axios from 'axios'
-import AddWarnDiolog from './components/AddWarnDiolog'
 import { savewarnrule, getwarnQuery, deletewarnrule } from '@/api/background.js'
 
 export default {
 	name: 'warn-rule-maintain',
 	components: {
-		AddWarnDiolog,
 	},
 	data() {
 		return{
-			// AddWarnFrom: {
-			// 	title: '新增预警',
-			// 	opened:false,
-			// 	AddWarnBrief: []
-			// },
+			warnPeopleForm_one:{
+				object: [
+					{
+						username:'',
+						phone_number: '',
+					}
+				]
+			},
+			manageMember:'',
+			options:[{label:'项目经理',value:'项目经理'
+			},{label:'项目总工',value:'项目总工'
+			},{label:'项目书记',value:'项目书记'
+			},{label:'工点分管领导',value:'工点分管领导'
+			},{label:'部门部长',value:'部门部长'
+			},{label:'技术人员',value:'技术人员'}],
 			opened:false,
 			totalpage: 0,
 			size: 10,
@@ -197,9 +257,11 @@ export default {
 			scopevalue: '',
 			membervalue:'',
 			indexvalue:'',
-			rulevalue:'',
+			rulevalue1:'',
+			rulevalue2:'',
 			changevalue:'',
-			commentvalue:'',
+			commentvalue1:'',
+			commentvalue2:'',
 			info:'',
       dialogVisible: false,
 			firstColumnList: [{
@@ -292,30 +354,30 @@ export default {
 			}],
 			secondColumnList: [],
 			thirdColumnList: [],
-			ruleList:[{
-				label: "[A/B]>=[数值%]",
-				value: "[A/B]>=[数值%]"
+			ruleList1:[{
+				label: "[数值①%]>=[A/B]",
+				value: "[数值%]>=[A/B]"
 			},{
-				label: "[A/B]<=[数值%]",
-				value: "[A/B]<=[数值%]"				
+				label: "[数值①%]<=[A/B]",
+				value: "[数值%]<=[A/B]"				
 			},{
-				label: "[A/B]>[数值%]",
-				value: "[A/B]>[数值%]"				
+				label: "[数值①%]>[A/B]",
+				value: "[数值%]>[A/B]"				
 			},{
-				label: "[A/B]<[数值%]",
-				value: "[A/B]<[数值%]"				
+				label: "[数值①%]<[A/B]",
+				value: "[数值%]<[A/B]"				
 			},{
-				label: "[A]>=[数值]",
-				value: "[A]>=[数值]"				
+				label: "[数值①]>=[A]",
+				value: "[数值]>=[A]"				
 			},{
-				label: "[A]<=[数值]",
-				value: "[A]<=[数值]"				
+				label: "[数值①]<=[A]",
+				value: "[数值]<=[A]"				
 			},{
-				label: "[A]>[数值]",
-				value: "[A]>[数值]"				
+				label: "[数值①]<[A]",
+				value: "[数值]<[A]"				
 			},{
-				label: "[A]<[数值]",
-				value: "[A]<[数值]"				
+				label: "[数值①]>[A]",
+				value: "[数值]>[A]"				
 			}],
 			changeList:[{
 				label: ">",
@@ -332,6 +394,34 @@ export default {
 			},{
 				label: "=",
 				value: "="
+			}],
+			ruleList2:[{
+				label: "无",
+				value: "无"				
+			},{
+				label: "[A/B]>=[数值②%]",
+				value: "[A/B]>=[数值%]"				
+			},{
+				label: "[A/B]<=[数值②%]",
+				value: "[A/B]<=[数值%]"				
+			},{
+				label: "[A/B]>[数值②%]",
+				value: "[A/B]>[数值%]"				
+			},{
+				label: "[A/B]<[数值②%]",
+				value: "[A/B]<[数值%]"				
+			},{
+				label: "[A]>=[数值②]",
+				value: "[A]>=[数值]"				
+			},{
+				label: "[A]<=[数值②]",
+				value: "[A]<=[数值]"				
+			},{
+				label: "[A]<[数值②]",
+				value: "[A]<[数值]"				
+			},{
+				label: "[A]>[数值②]",
+				value: "[A]>[数值]"				
 			}],
 			warnrulefileds: {}
 		}
@@ -363,7 +453,7 @@ export default {
 			 getwarnQuery(this.page, this.size).then(res => {
 				this.totalpage = res.detail.totalCount
 				this.changewarnrule(res.data)
-				// console.log(this.warnruleList,this.firstColumnList,'测试')
+				console.log(this.warnruleList,'测试')
 			}).catch(err =>{
 				console.log(err);
 			})
@@ -386,7 +476,9 @@ export default {
 							}
 						}
 					}
-					item.warnrule = item.rule.replace(/数值/g,item.value)
+					item.valuearr = String(item.value).split(',')
+					item.rulearr = String(item.rule).split(',')
+					item.warnrule = item.rulearr[0].replace(/数值/g,item.valuearr[0]) + ';' +item.rulearr[1].replace(/数值/g,item.valuearr[1])
 					return item;
 				})
 		},
@@ -411,22 +503,35 @@ export default {
 		// 		})
 		// },
 		submitHandler() {
-			// console.log(this.scopevalue.value)
-			// console.log(this.membervalue.value)
-			// console.log(this.indexvalue.value)
-			// console.log(this.rulevalue)
-			// console.log(this.commentvalue)
-			// console.log(this.info)
-			this.warnrulefileds = {
-				"componentTypeCode": this.membervalue.value,
-				"createDate": null,
-				"indexName": this.indexvalue.value,
-				"info": this.info,
-				"modifyDate": null,
-				"objectID": null,
-				"rule": this.rulevalue,
-				"scopeCode": this.scopevalue.value,
-				"value": this.commentvalue
+			for(let i = 0; i<this.warnPeopleForm_one.object.length ;i++){
+				this.manageMember = this.warnPeopleForm_one.object[i].username +':' + this.warnPeopleForm_one.object[i].phone_number + '；' + this.manageMember
+			}
+			if(this.rulevalue2 == '无'){
+				this.warnrulefileds = {
+					"componentTypeCode": this.membervalue.value,
+					"createDate": null,
+					"indexName": this.indexvalue.value,
+					"info": this.info,
+					"manageMember": this.manageMember,
+					"modifyDate": null,
+					"objectID": null,
+					"rule": this.rulevalue1+','+'',
+					"scopeCode": this.scopevalue.value,
+					"value": this.commentvalue1+','+this.commentvalue2
+				}
+			}else{
+				this.warnrulefileds = {
+					"componentTypeCode": this.membervalue.value,
+					"createDate": null,
+					"indexName": this.indexvalue.value,
+					"info": this.info,
+					"manageMember": this.manageMember,
+					"modifyDate": null,
+					"objectID": null,
+					"rule": this.rulevalue1+','+this.rulevalue2,
+					"scopeCode": this.scopevalue.value,
+					"value": this.commentvalue1+','+this.commentvalue2
+				}
 			}
 			savewarnrule(this.warnrulefileds).then(res => {
 				this.$message({
@@ -437,9 +542,11 @@ export default {
 				this.scopevalue = '',
 				this.membervalue = '',
 				this.indexvalue = '',
-				this.rulevalue = '',
+				this.rulevalue1 = '',
+				this.rulevalue2 = '',
 				this.changevalue = '',
-				this.commentvalue = '',
+				this.commentvalue1 = '',
+				this.commentvalue2 = '',
 				this.info = '',
 				this.opened = false
 			}).catch(err =>{
@@ -453,7 +560,7 @@ export default {
 			this.rulevalue = '',
 			this.changevalue = '',
 			this.commentvalue = '',
-			this.info = '',
+			this.info = ''
 			this.getwarnrule();
 			this.opened = false
 		},
@@ -471,6 +578,12 @@ export default {
 				this.thirdColumnList = item.children
 			}
 		},
+		addSender_1(){  //添加更多联系人
+            this.warnPeopleForm_one.object.push( { username:'', phone_number: ''})
+    },
+		removeSender_1(index){   //移除
+            this.warnPeopleForm_one.object.splice( index, 1)
+    },
 	},
   watch: {
 
@@ -503,22 +616,58 @@ export default {
 		font-weight: bold;
 		line-height: 40px	;
 	}
+	.select-titlee {
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		line-height: 40px	;
+		margin-left: 10px;
+	}
+	.select-titleee {
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		line-height: 40px	;
+		margin-left: -30px;
+	}
+	.select-titleeee {
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		line-height: 40px	;
+		margin-left: -15px;
+	}
 	.search-box-handler {
 		margin-left: 66px;
 		top: -35px;
+	}
+	.search-box-handlerr {
+		margin-left: 66px;
+		width: 75%;
+		top: -35px;
+	}
+	.search-box-handlerrr{
+		top: -35px;
+		width: 75%;
+		margin-left: 26px;
 	}
 	.button-group {
 		display:flex;
 		justify-content:center;
 	}
-	.valueinput {
-		width: 70%;
-		margin-left: 100px;
+	.valueinput1 {
+		width: 60%;
+		margin-left: 24px;
+		top: -35px;
+	}
+	.valueinput2 {
+		width: 60%;
+		margin-left: 40px;
 		top: -35px;
 	}
 	.infoinput {
-		width: 81%;
-		margin-left: 98px;
+		width: 90%;
+		margin-left: 10%;
 		top: -35px;
 	}
 </style>
