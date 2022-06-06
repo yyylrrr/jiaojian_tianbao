@@ -74,7 +74,8 @@
 								<el-select v-model="rulevalue2" 
 									clearable 
 									size="mini"
-									class="search-box-handlerrr">
+									class="search-box-handlerrr"
+									@change="watchrule2change">
 									<el-option
 										v-for="item in ruleList2"
 										:key="item.value"
@@ -89,7 +90,7 @@
 							</el-col>
 							<el-col :span="4">
 								<dt class="select-titleeee">数值②：</dt>
-								<el-input v-model="commentvalue2" size="mini" class="valueinput2" placeholder="数值②"></el-input>
+								<el-input v-model="commentvalue2" size="mini" class="valueinput2" placeholder="数值②" :disabled = "rule2value"></el-input>
 							</el-col>
 						</el-row>
 						<el-row>
@@ -103,7 +104,7 @@
     <el-row v-for="(item,index) in warnPeopleForm_one.object" :key="index">
         <el-col :span="8">
             <el-form-item :prop="'object.' + index + '.username'" label="关联管理角色："  label-width="110px" style="margin-left: -3px;">
-							<el-select size="mini" v-model="item.username" style="width:250px;margin-left:-15px;" placeholder="请选择">
+							<el-select size="mini" v-model="item.username" allow-create filterable default-first-option style="width:250px;margin-left:-15px;" placeholder="请选择">
 								<el-option
 									v-for="item in options"
 									:key="item.value"
@@ -259,6 +260,7 @@ export default {
 			indexvalue:'',
 			rulevalue1:'',
 			rulevalue2:'',
+			rule2value: false,
 			changevalue:'',
 			commentvalue1:'',
 			commentvalue2:'',
@@ -277,8 +279,8 @@ export default {
 						"label": "初支回弹检测强度",
 						"value": "初支回弹检测强度"
 					},{
-						"label": "实际喷射放量",
-						"value": "实际喷射放量"
+						"label": "实际喷射方量",
+						"value": "实际喷射方量"
 					}]
 				},{
 					"label": "小导管模型",
@@ -312,8 +314,14 @@ export default {
 					"label": "仰拱（底板）模型",
 					"value": "01",
 					"children": [{
-						"label": "4d、7d同养混凝土试块强度",
-						"value": "4d、7d同养混凝土试块强度"			
+						"label": "24h同养混凝土试块强度",
+						"value": "24h同养混凝土试块强度"			
+					},{
+						"label": "3d同养混凝土试块强度",
+						"value": "3d同养混凝土试块强度"			
+					},{
+						"label": "7d同养混凝土试块强度",
+						"value": "7d同养混凝土试块强度"			
 					},{
 						"label": "混凝土实际浇筑量",
 						"value": "混凝土实际浇筑量"			
@@ -325,19 +333,25 @@ export default {
 				"children": [{
 					"label": "拱墙衬砌模型",
 					"value": "01",
-					"children":[
+					"children":[{
+							"label": "24h同养混凝土试块强度",
+							"value": "24h同养混凝土试块强度"			
+						},{
+							"label": "3d同养混凝土试块强度",
+							"value": "3d同养混凝土试块强度"			
+						},
 						{
-							"label": "4d、7d同养混凝土试块强度",
-							"value": "4d、7d同养混凝土试块强度"			
+							"label": "7d同养混凝土试块强度",
+							"value": "7d同养混凝土试块强度"			
 						},{
 							"label": "混凝土实际浇筑量",
 							"value": "混凝土实际浇筑量"				
 						},{
-							"label": "二衬外观质量",
-							"value": "二衬外观质量"				
+							"label": "脱模后二衬表观质量",
+							"value": "脱模后二衬表观质量"				
 						},{
-							"label": "二衬质量自评价",
-							"value": "二衬质量自评价"			
+							"label": "自检结果",
+							"value": "自检结果"			
 						}]		
 				}]
 			},{
@@ -347,8 +361,8 @@ export default {
 					"label": "洞内排水沟模型",
 					"value": "02",
 					"children":[{
-						"label": "外观质量",
-						"value": "外观质量"
+						"label": "外观质量（错台、线形不顺直、尺寸偏差、外观差）",
+						"value": "外观质量（错台、线形不顺直、尺寸偏差、外观差）"
 					}]	
 				}]
 			}],
@@ -426,7 +440,8 @@ export default {
 			warnrulefileds: {}
 		}
 	},
-
+  watch: {
+  },
 	created() {
 		this.getwarnrule();
 		// this.loadData();
@@ -503,8 +518,27 @@ export default {
 		// 		})
 		// },
 		submitHandler() {
+			if(this.scopevalue.value != '',
+			this.membervalue.value != '',
+			this.rulevalue1 != '',
+			this.rulevalue2 != '',
+			this.commentvalue1 != ''){
+					this.submitHandlerbefore()
+				}else{
+					this.$message({
+						message: "条件不完整，未提交！",
+						type: 'warning'
+						});
+				}
+		},
+		submitHandlerbefore() {
+			this.manageMember = ''
 			for(let i = 0; i<this.warnPeopleForm_one.object.length ;i++){
-				this.manageMember = this.warnPeopleForm_one.object[i].username +':' + this.warnPeopleForm_one.object[i].phone_number + '；' + this.manageMember
+				if(this.warnPeopleForm_one.object[i].username != '' && this.warnPeopleForm_one.object[i].phone_number != ''){
+					this.manageMember = this.warnPeopleForm_one.object[i].username +':' + this.warnPeopleForm_one.object[i].phone_number + '；' + this.manageMember
+				}else{
+					this.manageMember = ''
+				}
 			}
 			if(this.rulevalue2 == '无'){
 				this.warnrulefileds = {
@@ -528,7 +562,7 @@ export default {
 					"manageMember": this.manageMember,
 					"modifyDate": null,
 					"objectID": null,
-					"rule": this.rulevalue1+','+this.rulevalue2,
+					"rule": this.rulevalue1+','+ this.rulevalue2,
 					"scopeCode": this.scopevalue.value,
 					"value": this.commentvalue1+','+this.commentvalue2
 				}
@@ -544,10 +578,13 @@ export default {
 				this.indexvalue = '',
 				this.rulevalue1 = '',
 				this.rulevalue2 = '',
+				this.rule2value = false,
 				this.changevalue = '',
 				this.commentvalue1 = '',
 				this.commentvalue2 = '',
 				this.info = '',
+				this.warnPeopleForm_one.object.length = 0,
+				this.warnPeopleForm_one.object.push( { username:'', phone_number: ''})
 				this.opened = false
 			}).catch(err =>{
 				console.log(err);
@@ -557,15 +594,22 @@ export default {
 			this.scopevalue = '',
 			this.membervalue = '',
 			this.indexvalue = '',
-			this.rulevalue = '',
+			this.rulevalue1 = '',
+			this.rulevalue2 = '',
+			this.rule2value = false,
 			this.changevalue = '',
-			this.commentvalue = '',
-			this.info = ''
+			this.commentvalue1 = '',
+			this.commentvalue2 = '',
+			this.info = '',
+			this.warnPeopleForm_one.object.length = 0,
+			this.warnPeopleForm_one.object.push( { username:'', phone_number: ''})
 			this.getwarnrule();
 			this.opened = false
 		},
 		getscope(item) {
       if (!item) {
+				this.membervalue = '',
+				this.indexvalue = ''
         return
       }else{
 				this.secondColumnList = item.children
@@ -573,6 +617,7 @@ export default {
 		},
 		getmember(item) {
       if (!item) {
+				this.indexvalue = ''
         return
       }else{
 				this.thirdColumnList = item.children
@@ -584,6 +629,14 @@ export default {
 		removeSender_1(index){   //移除
             this.warnPeopleForm_one.object.splice( index, 1)
     },
+		watchrule2change(val){
+			console.log(val)
+			if(val == '无'){
+				this.rule2value = true
+			}else{
+				this.rule2value = false
+			}
+		}
 	},
   watch: {
 

@@ -115,11 +115,11 @@ export function getwarninfoQuery(department,direction, ebsStr, orderBy, page, si
 }
 
 //保存超前地质勘探节点
-export function savereport(reportfileds) {
+export function savereport(reportInfoDO) {
   return request({
     url: 'https://portal.ehjedu.cn/arcgisService/reportInfo/save',
     method: 'post',
-    data:reportfileds
+    data:reportInfoDO
   })
 }
 
@@ -143,5 +143,87 @@ export function deleteReportInfo(ids) {
     url: 'https://portal.ehjedu.cn/arcgisService/reportInfo/delete',
     method: 'delete',
 		data:ids
+  })
+}
+
+//保存超前地质勘探报告位置：一级名录
+export function saveposition(reportLocationDO) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportLocation/save',
+    method: 'post',
+    data:reportLocationDO
+  })
+}
+
+//保存超前地质勘探报告位置：一级名录
+export function getposition() {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportLocation/find',
+    method: 'get',
+  })
+}
+
+//更新超前地质勘探报告位置：一级名录
+export function editposition(reportLocationDO) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportLocation/update',
+    method: 'post',
+    data:reportLocationDO
+  })
+}
+
+//删除超前地质勘探报告位置：一级名录
+export function deleteposition(id) {
+  return request({
+    url: `https://portal.ehjedu.cn/arcgisService/reportLocation/delete/${id}`,
+    method: 'get',
+  })
+}
+
+export function saveereport(reportTypeDO) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportType/save',
+    method: 'post',
+    data:reportTypeDO
+  })
+}
+
+export function getreport() {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportType/find',
+    method: 'get',
+  })
+}
+
+export function editreport(reportTypeDO) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/reportType/update',
+    method: 'post',
+    data:reportTypeDO
+  })
+}
+
+export function deletereport(id) {
+  return request({
+    url: `https://portal.ehjedu.cn/arcgisService/reportType/delete/${id}`,
+    method: 'get',
+  })
+}
+
+export function deleteexcel() {
+  return request({
+    url: `https://portal.ehjedu.cn/arcgisService/excel/dicClear`,
+    method: 'get',
+  })
+}
+
+export function getdicQuery(page,size) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/excel/dicFind',
+    method: 'get',
+		params: {
+			page: page,
+			size: size
+		}
   })
 }

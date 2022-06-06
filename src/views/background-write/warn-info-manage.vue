@@ -892,7 +892,7 @@ export default {
 					circlevalue: '03',
 					circlelabel: '二衬',
 					children: [{
-						componentvalue: '04',
+						componentvalue: '01',
 						componentlabel: '拱墙衬砌模型',
 					}]
 				},{

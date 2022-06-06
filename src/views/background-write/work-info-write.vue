@@ -414,7 +414,7 @@
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-more">选择</el-button>
+									type="success" icon="el-icon-more" @click="selectDataInfo">选择</el-button>
 								</el-col>
 							</el-col>
 						</el-row>
@@ -1061,7 +1061,7 @@ export default {
 					circlevalue: '03',
 					circlelabel: '二衬',
 					children: [{
-						componentvalue: '04',
+						componentvalue: '01',
 						componentlabel: '拱墙衬砌模型',
 					}]
 				},{
@@ -1166,6 +1166,7 @@ export default {
 				// console.log(this.ebscode)
 			}
 			getpageQuery(this.tabsName, this.direction, this.ebscode, this.orderBy, this.page, this.size).then(res => {
+				// console.log(this.ebscode)
 				this.totalpage = res.detail.totalCount
 				this.searchList = res.data.map(item =>{
 					item.edit = false;
@@ -1232,13 +1233,36 @@ export default {
 			}
 		},
 		operateDataInfo() {
+			console.log(this.selectdata)
 			for(var i = 0; i < this.selectdata.length; i++) {
-				if(this.selectdata.name == '锚杆锚固质量自检'){
-					this.operateFrom.opened = !this.operateFrom.opened;
-					this.operateFrom.operateBrief = this.selectdata
+				if(this.selectdata[i].name == '锚杆锚固质量自检'){
+					// this.operateFrom.opened = !this.operateFrom.opened;
+					// this.operateFrom.operateBrief = this.selectdata
+						this.$message({
+							message: "编辑自检结果请使用选择功能！",
+							type: 'warning'
+						});
 				}else{
 					this.selectdata[i].edit = true
 				}
+			}
+		},
+		selectDataInfo(){
+			if(this.selectdata.length == 1){
+				if(this.selectdata[0].name == '锚杆锚固质量自检'){
+					this.operateFrom.opened = !this.operateFrom.opened;
+					this.operateFrom.operateBrief = this.selectdata
+					}else{
+						this.$message({
+							message: "非自检结果请使用编辑功能！",
+							type: 'warning'
+						});												
+					}
+			}else{
+				this.$message({
+					message: "仅可选择一项",
+					type: 'warning'
+				})				
 			}
 		},
 		cancelEdit() {
@@ -1296,7 +1320,15 @@ export default {
 			}
 		},
 		clickchange(row) {
-			row.edit = !row.edit
+			console.log(row)
+			if(row.name != '锚杆锚固质量自检'){
+				row.edit = !row.edit
+			}else{
+				this.$message({
+					message: "编辑自检结果请使用选择功能！",
+					type: 'warning'
+				})				
+			}
 		}
 	}
 }
@@ -1327,7 +1359,7 @@ export default {
 		font-weight: bold;
 		margin-top: 10px;
 		width: 80px;
-		margin-left: -15px;
+		margin-left: 5px;
 	}
 	.select-titleee{
 		color: #303133;
@@ -1335,7 +1367,7 @@ export default {
 		font-weight: bold;
 		margin-top: 10px;
 		width: 80px;
-		margin-left: -55px;
+		margin-left: -15px;
 	}
 	.search-box-handler {
 		margin-left: 75px;
@@ -1346,11 +1378,11 @@ export default {
 		top: -22px;
 	}
 	.search-box-handlerrr {
-		margin-left: 50px;
+		margin-left: 70px;
 		top: -22px;
 	}
 	.search-box-handlerrrr{
-		margin-left: 10px;
+		margin-left: 50px;
 		top: -22px;
 	}
 	.certain-button {

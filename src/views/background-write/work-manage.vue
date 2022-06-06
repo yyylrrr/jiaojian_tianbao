@@ -2,7 +2,24 @@
 		<div class="info-box">
 			<el-card class="box-card">
 						<el-row>
-							<el-col :span="7">
+							<el-col :span="6">
+								<dt class="select-title">勘探位置选择</dt>
+								<el-select v-model="positiontype" 
+									clearable 
+									size="mini"
+									class="search-box-handler">
+									<el-option
+										v-for="item in positionoptions"
+										:key="item.code2 + item.chineseName2"
+										:label="item.chineseName2"
+										:value="item.code2">
+									</el-option>
+								</el-select>
+								<div class="selectbutton">
+									<el-button type="info" size="mini" plain @click="positionmanage = true">勘探位置管理</el-button>
+									</div>
+							</el-col>
+							<el-col :span="6">
 								<dt class="select-title">分析报告类型</dt>
 								<el-select v-model="reporttype" 
 									clearable 
@@ -10,26 +27,29 @@
 									class="search-box-handler">
 									<el-option
 										v-for="item in reportoptions"
-										:key="item.code"
-										:label="item.chineseName"
-										:value="item.code">
+										:key="item.code1 + item.chineseName1"
+										:label="item.chineseName1"
+										:value="item.code1">
 									</el-option>
 								</el-select>
+								<div class="selectbutton">
+									<el-button type="info" size="mini" plain @click="reportmanage = true">报告类型管理</el-button>
+								</div>
 							</el-col>
-							<el-col :span="7">
-								<dt class="select-title">分析报告名称</dt>
+							<el-col :span="5">
+								<dt class="select-titlee">分析报告名称</dt>
 								<el-input v-model="reportname" 
 									clearable 
 									size="mini"
-									class="search-box-handler">
+									class="search-box-handlerr">
 								</el-input>
 							</el-col>
-							<el-col :span="7">
-									<dt class="select-title">查看链接</dt>
+							<el-col :span="5">
+									<dt class="select-titleee">查看链接</dt>
 								<el-input v-model="reportlink" 
 									clearable 
 									size="mini"
-									class="search-box-handlerr">
+									class="search-box-handlerrr">
 								</el-input>
 							</el-col>
 							<el-col :span="2">
@@ -73,12 +93,22 @@
 										</el-table-column>
 										<el-table-column
 										align="center"
+										label="勘探位置">
+											<template slot-scope="{row}">
+												<el-select v-if="row.edit" v-model="row.locationName" size="small" class="edit-input"  placeholder="请选择">
+													<el-option v-for="item in positionoptions" :key="item.code2 + 'r'" :label="item.chineseName2" :value="item.code2"></el-option>
+												</el-select>
+												<span v-else>{{ row.locationName }}</span>
+											</template>
+										</el-table-column>
+										<el-table-column
+										align="center"
 										label="分析报告类型">
 											<template slot-scope="{row}">
-												<el-select v-if="row.edit" v-model="row.reportType" size="small" class="edit-input"  placeholder="请选择">
-													<el-option v-for="item in reportoptions" :key="item.code" :label="item.chineseName" :value="item.code"></el-option>
+												<el-select v-if="row.edit" v-model="row.typeName" size="small" class="edit-input"  placeholder="请选择">
+													<el-option v-for="item in reportoptions" :key="item.code1 + 'r'" :label="item.chineseName1" :value="item.code1"></el-option>
 												</el-select>
-												<span v-else>{{ row.reportType }}</span>
+												<span v-else>{{ row.typeName }}</span>
 											</template>
 										</el-table-column>
 										<el-table-column
@@ -115,34 +145,125 @@
 							</el-col>
 						</el-row>
 			</el-card>
+			<el-dialog
+				title="勘探位置管理"
+				:visible.sync="positionmanage"
+				width="30%">
+				<el-table
+					:data="positionData"
+					style="width: 100%"
+					@row-dblclick="clickchange">
+					<el-table-column
+						label="序号"
+						align="center"
+						type = "index"
+						width="80">
+					</el-table-column>
+					<el-table-column
+						label="勘探位置名称"
+						align="center">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.locationName" size="small" clearable/>
+												<span v-else>{{ row.locationName }}</span>
+											</template>
+					</el-table-column>
+					<el-table-column
+						label="操作"
+						align="center"
+						width="160">
+						<template slot-scope="scope">
+							<el-button
+								size="mini"
+								@click="editposition(scope.row)">编辑</el-button>
+							<el-button
+								size="mini"
+								type="danger"
+								@click="deleteposition(scope.row)">删除</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+				<span slot="footer" class="dialog-footer">
+					<el-input v-model="position" size="mini" style="width:40%;margin:20px" placeholder="请输入新增位置名称"></el-input>
+					<el-button type="primary" @click="savePosition" size="mini">新增</el-button>
+				</span>
+			</el-dialog>
+			<el-dialog
+				title="分析报告类型管理"
+				:visible.sync="reportmanage"
+				width="30%">
+				<el-table
+					:data="reportData"
+					style="width: 100%"
+					@row-dblclick="clickchange">
+					<el-table-column
+						label="序号"
+						align="center"
+						type = "index"
+						width="80">
+					</el-table-column>
+					<el-table-column
+						label="报告类型名称"
+						align="center">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.typeName" size="small" clearable/>
+												<span v-else>{{ row.typeName }}</span>
+											</template>
+					</el-table-column>
+					<el-table-column
+						label="操作"
+						align="center"
+						width="160">
+						<template slot-scope="scope">
+							<el-button
+								size="mini"
+								@click="editreport(scope.row)">编辑</el-button>
+							<el-button
+								size="mini"
+								type="danger"
+								@click="deletereport(scope.row)">删除</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+				<span slot="footer" class="dialog-footer">
+					<el-input v-model="report" size="mini" style="width:40%;margin:20px" placeholder="请输入新增位置名称"></el-input>
+					<el-button type="primary" @click="saveReport" size="mini">新增</el-button>
+				</span>
+			</el-dialog>
 		</div>
 </template>
 
 <script>
-import { savereport, getreportQuery, deleteReportInfo } from '@/api/background.js'
+import { savereport, getreportQuery, deleteReportInfo, saveposition, getposition, editposition, deleteposition, saveereport, getreport, editreport, deletereport} from '@/api/background.js'
 
 export default {
 	name: 'work-manage',
 	data() {
 		return {
+			positionmanage: false,
+			position: '',
+			reportmanage: false,
+			report:'',
 			totalpage: 0,
 			size: 10,
 			page: 1,
+			positiontype: '',
 			reporttype: '',
-			reportoptions:[{chineseName:'格聂山3#横洞超前地质预报综合分析成果',code:'格聂山3#横洞超前地质预报综合分析成果'
-			},{chineseName:'格聂山3#横洞地质核查单',code:'格聂山3#横洞地质核查单'
-			},{chineseName:'格聂山3#横洞围岩等级爆破设计',code:'格聂山3#横洞围岩等级爆破设计'
-			}],
+			reportoptions:[],
+			positionoptions:[],
 			reportname:'',
 			reportlink:'',
 			reportList:[],
 			reportfileds: {},
 			sortType:false,
-			sortableFields:'modifyDate'
+			sortableFields:'modifyDate',
+			positionData:[],
+			reportData:[]
 		}
 	},
 	created() {
 		this.getreportpage();
+		this.getPosition();
+		this.getReport();
 	},
 	methods: {
 		indexMethod(index) {
@@ -151,15 +272,18 @@ export default {
 		addreport() {
 			if(this.reportlink != '' &&
 				this.reportname != '' &&
+				this.positiontype != '' &&
 				this.reporttype != ''){
 				this.reportfileds = {
 					"createDate": null,
 					"link":this.reportlink,
+					"locationId": this.positiontype,
 					"modifyDate": null,
 					"objectID": null,
 					"reportName": this.reportname,
-					"reportType": this.reporttype
+					"reportTypeId": this.reporttype,
 				}
+				console.log(this.reportfileds)
 				savereport(this.reportfileds).then(res => {
 					this.$message({
 						message: "提交成功！",
@@ -168,6 +292,7 @@ export default {
 					this.reportlink = ''
 					this.reportname = ''
 					this.reporttype = ''
+					this.positiontype = ''
 					this.getreportpage();
 				}).catch(err =>{
 					console.log(err);
@@ -232,7 +357,7 @@ export default {
 			}
 		},
 		deleteClick(report){
-			deleteReportInfo([report.objectID]).then(res => {
+			deleteReportInfo([report.objectId]).then(res => {
 					this.$message({
 						message: "删除成功！",
 						type: 'success'
@@ -254,7 +379,164 @@ export default {
 						this.sortType = false
 						this.getreportpage();		
 					}
-				}	
+				},
+		savePosition(){
+			let reportLocationDO = {
+				"createDate" : null,
+				"locationName": this.position,
+				"modifyDate": null,
+				"objectID": null
+			}
+			if(this.position != ''){
+				saveposition(reportLocationDO).then(res => {
+						this.$message({
+							message: "新增位置成功！",
+							type: 'success'
+							});
+				this.position = ''
+				this.getPosition();
+					}).catch(err =>{
+						console.log(err);
+					})
+			}else{
+						this.$message({
+							message: "请输入位置！",
+							type: 'warning'
+							});
+			}
+		},
+		async getPosition(){
+				await getposition().then(res => {
+					this.positionData = res.data.map(item =>{
+					item.edit = false;
+					var date = new Date(item.modifyDate).toJSON();
+					item.modifyCreatDate = new Date(+new Date(date)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')  
+					return item;
+				})
+				this.positionoptions = []
+				for(let i = 0; i < this.positionData.length; i++){
+					this.positionoptions.push({chineseName2:this.positionData[i].locationName,code2:this.positionData[i].objectID})
+				}
+				// console.log(this.positionData,this.positionoptions)
+					}).catch(err =>{
+						console.log(err);
+					})			
+		},
+		editposition(row){
+			console.log(row)
+			if(row.locationName != ''){
+			let reportLocationDO = {
+				"createDate" : null,
+				"locationName": row.locationName,
+				"modifyDate": null,
+				"objectID": row.objectID
+			}
+			editposition(reportLocationDO).then(res => {
+									this.$message({
+										message: "编辑位置成功！",
+										type: 'success'
+										});
+									row.edit =false
+									this.getPosition();
+								}).catch(err =>{
+									console.log(err);
+								})
+			}else{
+						this.$message({
+							message: "请输入位置！",
+							type: 'warning'
+							});
+			}
+		},
+		deleteposition(row){
+			deleteposition(row.objectID).then(res => {
+									this.$message({
+										message: "删除位置成功！",
+										type: 'success'
+										});
+									this.getPosition();
+								}).catch(err =>{
+									console.log(err);
+								})
+		},
+		saveReport(){
+			let reportTypeDO = {
+				"createDate" : null,
+				"modifyDate": null,
+				"objectID": null,
+				"typeName": this.report
+			}
+			if(this.report != ''){
+				saveereport(reportTypeDO).then(res => {
+						this.$message({
+							message: "新增报告类型成功！",
+							type: 'success'
+							});
+				this.report = ''
+				this.getReport();
+					}).catch(err =>{
+						console.log(err);
+					})
+			}else{
+						this.$message({
+							message: "请输入报告类型！",
+							type: 'warning'
+							});
+			}
+		},
+		async getReport(){
+				await getreport().then(res => {
+					this.reportData = res.data.map(item =>{
+					item.edit = false;
+					var date = new Date(item.modifyDate).toJSON();
+					item.modifyCreatDate = new Date(+new Date(date)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')  
+					return item;
+				})
+					}).catch(err =>{
+						console.log(err);
+					})
+					this.reportoptions = []
+					for(let i = 0; i < this.reportData.length; i++){
+						this.reportoptions.push({chineseName1:this.reportData[i].typeName,code1:this.reportData[i].objectID})
+					}
+		},
+		editreport(val){
+			console.log(val)
+			if(val.typeName != ''){
+			let reportTypeDO = {
+				"createDate" : null,
+				"typeName": val.typeName,
+				"modifyDate": null,
+				"objectID": val.objectID
+			}
+			editreport(reportTypeDO).then(res => {
+									this.$message({
+										message: "编辑报告类型成功！",
+										type: 'success'
+										});
+									val.edit =false
+									this.getReport();
+								}).catch(err =>{
+									console.log(err);
+								})
+			}else{
+						this.$message({
+							message: "请输入报告类型！",
+							type: 'warning'
+							});
+			}
+		},
+		deletereport(val){
+			deletereport(val.objectID).then(res => {
+									this.$message({
+										message: "删除报告类型成功！",
+										type: 'success'
+										});
+									this.getReport();
+								}).catch(err =>{
+									console.log(err);
+								})
+		},
 	}
 }
 </script>
@@ -270,20 +552,41 @@ export default {
 		font-weight: bold;
 		margin-top: 10px;
 		margin-left: 10px;
-		width: 100px;
+		width: 23%;
+	}
+	.select-titlee {
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		margin-top: 10px;
+		margin-left: 10px;
+		width: 30%;
+	}
+	.select-titleee {
+		color: #303133;
+		font-size: 15px;
+		font-weight: bold;
+		margin-top: 10px;
+		margin-left: 10px;
+		width: 20%;
 	}
 	.search-box-handler {
-		margin-left: 105px;
-		width: 78%;
+		margin-left: 26%;
+		width: 44%;
 		top: -22px;
 	}
 	.search-box-handlerr {
-		margin-left: 75px;
-		width: 80%;
+		margin-left: 30%;
+		width: 66%;
+		top: -22px;
+	}
+	.search-box-handlerrr {
+		margin-left: 23%;
+		width: 66%;
 		top: -22px;
 	}
 	.certain-button {
-		margin-left: -5px;
+		margin-left: -20px;
 		margin-top: 5px;
 	}
 	.block {
@@ -291,5 +594,9 @@ export default {
 	}
 	.edit-input{
 		width: 100%;
+	}
+	.selectbutton{
+		margin-left: 73%;
+		margin-top: -50px;
 	}
 </style>

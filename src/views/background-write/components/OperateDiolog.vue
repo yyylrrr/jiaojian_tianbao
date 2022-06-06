@@ -88,7 +88,7 @@ export default {
 				this.selectinfo.value = this.radio
 			}
 			else if(this.radio === "不合格"){
-				this.selectinfo.value = "不合格数量：" + this.unpasscount + "\xa0\xa0" + "不合格位置：" + this.unpassadress + "\xa0\xa0" + "合格数量：" + this.passcount
+				this.selectinfo.value = "不合格" +"\xa0\xa0" +  "不合格数量：" + this.unpasscount + "\xa0\xa0" + "不合格位置：" + this.unpassadress + "\xa0\xa0" + "合格数量：" + this.passcount
 			}
 			this.dialogVisible = false
 		},

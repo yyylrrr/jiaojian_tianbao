@@ -127,6 +127,24 @@ export const constantRoutes = [
           title: '预警规则维护',
 					icon: 'documentation'
         }
+      },
+      {
+        path: 'czbusiness/dic-manage',
+        component: () => import('@/views/background-write/dic-manage'),
+        name: 'dic-manage',
+        meta: {
+          title: '词典数据管理',
+					icon: 'documentation'
+        }
+      },
+      {
+        path: 'czbusiness/proceeding-manage',
+        component: () => import('@/views/background-write/proceeding-manage'),
+        name: 'proceeding-manage',
+        meta: {
+          title: '施工进度管理',
+					icon: 'documentation'
+        }
       }
     ]
   },
