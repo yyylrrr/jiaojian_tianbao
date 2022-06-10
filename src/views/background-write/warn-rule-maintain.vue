@@ -142,6 +142,107 @@
 						</div>
   </el-dialog>
 
+  <el-dialog
+    title='新增预警'
+    :visible.sync="opened1"
+    width="42%"
+		center
+  >
+						<el-row>
+							<el-col :span="8">
+								<dt class="select-title">所属范围:</dt>
+								<el-select v-model="scopevalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getscope">
+									<el-option
+										v-for="item in firstColumnList"
+										:key="item.value"
+										:label="item.label"
+										:value="item">
+									</el-option>									
+								</el-select>
+							</el-col>
+							<el-col :span="8">
+								<dt class="select-title">构件选择:</dt>
+								<el-select v-model="membervalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler"
+									@change="getmember">
+									<el-option
+										v-for="item in secondColumnList"
+										:key="item.value"
+										:label="item.label"
+										:value="item">
+									</el-option>	
+								</el-select>
+							</el-col>
+							<el-col :span="8">
+									<dt class="select-title">指标选择:</dt>
+								<el-select v-model="indexvalue" 
+									clearable 
+									size="mini"
+									class="search-box-handler">
+									<el-option
+										v-for="item in thirdColumnList"
+										:key="item.value"
+										:label="item.label"
+										:value="item">
+									</el-option>	
+								</el-select>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="24">
+									<dt class="select-title">预警内容:</dt>
+									<el-input v-model="info" size="mini" class="infoinput" placeholder="请输入内容"></el-input>
+							</el-col>
+						</el-row>
+						<el-row>
+<el-form :model="warnPeopleForm_one" ref="warnPeopleFormRef_one" :show-close="true">
+    <el-row v-for="(item,index) in warnPeopleForm_one.object" :key="index">
+        <el-col :span="8">
+            <el-form-item :prop="'object.' + index + '.username'" label="关联管理角色："  label-width="110px" style="margin-left: -3px;">
+							<el-select size="mini" v-model="item.username" allow-create filterable default-first-option style="width:250px;margin-left:-15px;" placeholder="请选择">
+								<el-option
+									v-for="item in options"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value">
+								</el-option>
+							</el-select>
+            </el-form-item>
+        </el-col>
+        <el-col :span="8">
+            <el-form-item :prop="'object.' + index + '.phone_number'" label="关联管理人：" label-width="100px" style="margin-left: 90px;">
+                <el-input size="mini" type="text" v-model="item.phone_number" style="width:250px;margin-left: -20px;"></el-input>
+            </el-form-item>
+        </el-col>
+        <el-col :span="1">
+            <el-button style="margin-top:4px;margin-left:175px;" type="success" plain round circle size="mini" v-if=" index == warnPeopleForm_one.object.length - 1 " :v-show="warnPeopleForm_one.object[index] == ''? false:true" @click="addSender_1()" class="el-icon-circle-plus"></el-button>
+        </el-col>
+        <el-col :span="1">
+						<el-button style="margin-top:4px;margin-left:175px;" type="danger" size="mini" plain round circle v-if="warnPeopleForm_one.object.length > 1" @click="removeSender_1(index)" class="el-icon-remove"></el-button>
+        </el-col>
+    </el-row>
+</el-form>
+						</el-row>
+						<div class="button-group">
+							<el-button size="small"
+							type="success"
+							icon="el-icon-upload"
+							@click="opened1 = false"
+							>提交</el-button>
+							<el-button size="small"
+							type="danger"
+							icon="el-icon-circle-close"
+							@click="opened1 = false"
+							>取消</el-button>
+						</div>
+  </el-dialog>
+
 				<el-card class="box-card">
 						<el-row>
 							<el-col :span="24">
@@ -213,7 +314,11 @@
 							<el-col class="button-group">
 								<el-col :span="2">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-upload" @click="AddWarnDataInfo">新增预警</el-button>
+									type="success" icon="el-icon-upload" @click="AddWarnDataInfo">新增数值预警规则</el-button>
+								</el-col>
+								<el-col :span="2" :offset="1">
+									<el-button class="certain-button" size="small"
+									type="success" icon="el-icon-upload" @click="AddWarnDataInfoo">其他预警规则设置</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
@@ -251,6 +356,7 @@ export default {
 			},{label:'部门部长',value:'部门部长'
 			},{label:'技术人员',value:'技术人员'}],
 			opened:false,
+			opened1:false,
 			totalpage: 0,
 			size: 10,
 			page: 1,
@@ -460,6 +566,9 @@ export default {
     },
 		AddWarnDataInfo() {
 					this.opened = !this.opened;
+		},
+		AddWarnDataInfoo() {
+					this.opened1 = !this.opened1;
 		},
 		indexMethod(index) {
 			return (this.page - 1) * this.size + index + 1;

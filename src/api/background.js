@@ -227,3 +227,21 @@ export function getdicQuery(page,size) {
 		}
   })
 }
+
+export function batchUploadFile(fileDO) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/file/upload',
+    method: 'post',
+		data:fileDO
+  })
+}
+
+export function geturltable(id) {
+  return request({
+    url: 'https://portal.ehjedu.cn/arcgisService/file/findById',
+		method: 'get',
+		params: {
+			id: id
+		}
+  })
+}

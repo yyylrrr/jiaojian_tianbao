@@ -622,10 +622,10 @@
 									<el-button class="certain-button" size="small"
 									type="danger" icon="el-icon-circle-close" @click="cancelEdit">取消</el-button>
 								</el-col>
-								<el-col :span="2" :offset="1">
+								<!-- <el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
 									type="success" icon="el-icon-more" @click="engineerselectWorkInfo">选择</el-button>
-								</el-col>
+								</el-col> -->
 							</el-col>
 						</el-row>
 					</el-tab-pane>
@@ -826,10 +826,6 @@
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="primary" icon="el-icon-edit" @click="operateDataInfo">编辑</el-button>
-								</el-col>
-								<el-col :span="2" :offset="1">
-									<el-button class="certain-button" size="small"
 									type="danger" icon="el-icon-circle-close" @click="cancelEdit">取消</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
@@ -850,6 +846,7 @@
 		<UploadDiolog :opened ="uploadFrom.opened" :uploadinfo = uploadFrom.uploadBrief />
 		<EngineerselectDiolog :opened ="engineerselectFrom.opened" :engineerselectinfo = engineerselectFrom.engineerselectBrief />
 		<QualitiselectDiolog :opened ="qualitiselectFrom.opened" :qualitiselectinfo = qualitiselectFrom.qualitiselectBrief />
+		<UrlTable :opened ="urltablemapopend" :urltablemapobject = urltablemapobject />
 	</div>
 </template>
 
@@ -859,6 +856,7 @@ import OperateDiolog from './components/OperateDiolog.vue'
 import UploadDiolog from './components/UploadDiolog.vue'
 import EngineerselectDiolog from './components/EngineerselectDiolog.vue'
 import QualitiselectDiolog from './components/QualitiselectDiolog.vue'
+import UrlTable from './components/ulrtable.vue'
 import { gettunnel, getregion, getmileageSection, getpageQuery, updatebatchinfo } from '@/api/background.js'
 
 export default {
@@ -867,10 +865,13 @@ export default {
 		OperateDiolog,
 		UploadDiolog,
 		EngineerselectDiolog,
-		QualitiselectDiolog
+		QualitiselectDiolog,
+		UrlTable
 	},
 	data() {
 		return{
+			urltablemapopend: false,
+			urltablemapobject: {},
 			tunneloptions: [],
 			tunnelvalue:'',
 			legendoptions: [],
@@ -917,7 +918,7 @@ export default {
 			uploadFrom: {
 				title: '自检结果',
 				opened:false,
-				uploadBrief: {}
+				uploadBrief: []
 			},
 
 			engineerselectFrom: {
@@ -929,7 +930,7 @@ export default {
 			qualitiselectFrom: {
 				title: '质检信息',
 				opened:false,
-				qualitiselectBrief: {}
+				qualitiselectBrief: []
 			},
 			totalpage: 0,
 			ebscode: '',
@@ -1236,8 +1237,11 @@ export default {
 			console.log(this.selectdata)
 			for(var i = 0; i < this.selectdata.length; i++) {
 				if(this.selectdata[i].name == '锚杆锚固质量自检'){
-					// this.operateFrom.opened = !this.operateFrom.opened;
-					// this.operateFrom.operateBrief = this.selectdata
+						this.$message({
+							message: "编辑自检结果请使用选择功能！",
+							type: 'warning'
+						});
+				}else if(this.selectdata[i].name == '自检结果'){
 						this.$message({
 							message: "编辑自检结果请使用选择功能！",
 							type: 'warning'
@@ -1266,7 +1270,7 @@ export default {
 			}
 		},
 		cancelEdit() {
-			console.log(this.searchList,'dsadsadef')
+			// console.log(this.searchList,'dsadsadef')
 			for(var i = 0; i < this.searchList.length; i++) {
 				if(this.searchList.name != '锚杆锚固质量自检') {
 				this.searchList[i].edit = false
@@ -1274,19 +1278,47 @@ export default {
 			}
 		},
 		uploadDataInfo() {
-			this.uploadFrom.opened = !this.uploadFrom.opened;
-			this.uploadFrom.uploadBrief = this.searchList[0]
+			if(this.selectdata.length == 1){
+				if(this.selectdata[0].name == '自检结果'){
+					this.uploadFrom.opened = !this.uploadFrom.opened;
+					this.uploadFrom.uploadBrief = this.selectdata
+					}else{
+						this.$message({
+							message: "只有自检结果可以使用导入功能！",
+							type: 'warning'
+						});												
+					}
+			}else{
+				this.$message({
+					message: "仅可选择一项",
+					type: 'warning'
+				})				
+			}
 		},
 		engineerselectWorkInfo() {
 			this.engineerselectFrom.opened = !this.engineerselectFrom.opened;
 			this.engineerselectFrom.engineerselectBrief = this.searchList[0]
 		},
 		qualitiselectWorkInfo() {
-			this.qualitiselectFrom.opened = !this.qualitiselectFrom.opened;
-			this.qualitiselectFrom.qualitiselectBrief = this.searchList[0]
+			if(this.selectdata.length == 1){
+				if(this.selectdata[0].name == '脱模后二衬表观质量'){
+					this.qualitiselectFrom.opened = !this.qualitiselectFrom.opened;
+					this.qualitiselectFrom.qualitiselectBrief = this.selectdata
+					}else{
+						this.$message({
+							message: "只有脱模后二衬表观质量可以使用选择功能！",
+							type: 'warning'
+						});												
+					}
+			}else{
+				this.$message({
+					message: "仅可选择一项",
+					type: 'warning'
+				})				
+			}
 		},
 		sortChange(column) {
-			console.log(column)
+			// console.log(column)
 			if(column.prop == 'startSegment'){
 				if(column.order == 'ascending' || column.order == null){
 					this.direction = true
@@ -1321,13 +1353,21 @@ export default {
 		},
 		clickchange(row) {
 			console.log(row)
-			if(row.name != '锚杆锚固质量自检'){
+			if(row.name != '锚杆锚固质量自检' && row.name != '自检结果' && row.name != '脱模后二衬表观质量'){
 				row.edit = !row.edit
-			}else{
+			}else if(row.name == '锚杆锚固质量自检'){
 				this.$message({
 					message: "编辑自检结果请使用选择功能！",
 					type: 'warning'
 				})				
+			}else if(row.name == '脱模后二衬表观质量'){
+				this.$message({
+					message: "编辑脱模后二衬表观质量请使用选择功能！",
+					type: 'warning'
+				})				
+			}else if(row.name == '自检结果'){
+				this.urltablemapobject = row
+				this.urltablemapopend = !this.urltablemapopend
 			}
 		}
 	}

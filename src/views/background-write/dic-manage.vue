@@ -53,7 +53,13 @@
             >
                 <el-button class="button1" size="small" type="primary" slot="trigger">选取词典</el-button>
 								<el-button class="button2" size="small" type="primary" @click="handleSubmit">提交词典</el-button>
-								<el-button class="button2" size="small" type="danger" @click="deleteexcel">清空数据库</el-button>
+								<el-button class="button2" size="small" type="primary" @click="download">下载模板</el-button>
+								<el-popconfirm 
+								title="确定删除吗？"
+								@onConfirm="deleteexcel()"
+								>
+								<el-button class="button2" size="small" type="danger" slot="reference">清空数据库</el-button>
+								</el-popconfirm>
             </el-upload>
 			</el-card>
 		</div>

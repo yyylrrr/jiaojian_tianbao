@@ -18,37 +18,27 @@
 			<el-upload
 				class="upload-demo"
 				ref="upload"
-				action="https://jsonplaceholder.typicode.com/posts/"
-				:on-preview="handlePreview"
-				:on-remove="handleRemove"
-				:file-list="fileList"
-				:auto-upload="false">
-				<el-button slot="trigger" size="small" type="primary" class="uploadbutton">上传本地自检结果文件</el-button>
+                      action="#"
+                      :show-file-list="true"
+                      :on-remove="removeFile"
+                      :multiple="true"
+                      :file-list="fileList"
+                      :on-change="handleChange"
+                      :auto-upload="false"
+                      :limit="5"
+                      :on-exceed="handleExceed"
+                      accept=".jpeg, .jpg, .png, .pdf">
+				<el-button slot="trigger" size="small" type="primary" class="uploadbutton">选择本地自检结果文件</el-button>
+				<el-button style="margin-left: 10px;" size="small" type="success" class="uploadbutton" @click="uploadFile">上传到服务器</el-button>
 			</el-upload>
 		</el-col>
 	</el-row>
-						<el-row>
-							<el-col class="button-group">
-								<el-col :span="2" :offset="8">
-									<el-button size="small"
-									type="success"
-									icon="el-icon-upload"
-									@click="submitHandler"
-									>提交</el-button>
-								</el-col>
-								<el-col :span="2" :offset="4">
-									<el-button size="small"
-									type="danger" 
-									icon="el-icon-circle-close"
-									@click="cancelHandler"
-									>取消</el-button>
-								</el-col>
-							</el-col>
-						</el-row>
   </el-dialog>
 </template>
 
 <script>
+
+import { batchUploadFile } from '@/api/background.js'
 
 export default {
   name: '',
@@ -58,7 +48,7 @@ export default {
       default: false
     },
 		uploadinfo: {
-				type: Object,
+				type: Array,
 				default:function() {
 				return []
       }
@@ -67,49 +57,61 @@ export default {
   data() {
     return {
       dialogVisible: false,
+			selectinfo: {},
 			radio: "",
 			fileList: [],
     }
   },
 	methods: {
-		submitHandler(file) {
-			console.log(file)
-			this.$refs.upload.submit();
-
-			this.dialogVisible = false
-		},
-		cancelHandler() {
-			this.fileList = [],
-			this.dialogVisible = false
-		},
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
-      handlePreview(file) {
-        console.log(file);
-      },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-				const isPNG = file.type === 'image/png';
-        const isLt5M = file.size / 1024 / 1024 < 5;
-
-        if (!isJPG || isPNG) {
-          this.$message.error('上传文件只能是JPG或PNG!');
+    // 选择文件时，往fileList里添加
+    handleChange(fileList) {
+      this.fileList.push(fileList)
+    },
+    removeFile(file) {
+      // 移除文件时，要重新给fileList赋值
+      const arr = []
+      for (let i = 0; i < this.fileList.length; i++) {
+        if (this.fileList[i].uid !== file.uid) {
+          arr.push(this.fileList[i])
         }
-        if (!isLt5M) {
-          this.$message.error('上传文件大小不能超过 5MB!');
-        }
-        return isJPG && isLt5M;
       }
+      this.fileList = arr
+    },
+    // 手动文件上传
+    uploadFile() {
+      if (this.fileList.length === 0) {
+        this.$message.warning('请选取文件')
+        return
+      }
+      let formData = new FormData()
+      // 因为要传一个文件数组过去，所以要循环append
+      this.fileList.forEach((item, index) => {
+        formData.append('file', item.raw)
+      })
+			formData.append('id', this.selectinfo.objectID)
+			formData.append('value', this.radio)
+      // batchUploadFile是我自己定义的接口
+      batchUploadFile(formData).then(res => {
+				this.$message.success('上传成功！')
+        this.fileList = []
+				this.$parent.getsearch();
+				this.dialogVisible = false
+      })
+    },
+    // 上传文件超出个数
+    handleExceed(files, fileList) {
+      this.$message.warning('文件个数超出限制')
+    }
 	},
 	computed: {
 		uploadtitle() {
-			return this.uploadinfo.name + '自检结果'
+			return this.selectinfo.modelType + '自检结果'
 		}
 	},
   watch: {
     opened() {
       this.dialogVisible = true
+			this.selectinfo = this.uploadinfo[0]
     }
   },
 }

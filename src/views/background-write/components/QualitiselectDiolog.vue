@@ -49,7 +49,7 @@ export default {
       default: false
     },
 		qualitiselectinfo: {
-				type: Object,
+				type: Array,
 				default:function() {
 				return []
       }
@@ -58,11 +58,17 @@ export default {
   data() {
     return {
       dialogVisible: false,
-			checkList: []
+			checkList: [],
+			selectinfo: {},
     }
   },
 	methods: {
 		submitHandler() {
+			// console.log(this.checkList)
+			this.selectinfo.value = ''
+			for(let i = 0; i < this.checkList.length; i++){
+				this.selectinfo.value = this.selectinfo.value + this.checkList[i].replace("",' ') + ';'
+			}
 			this.dialogVisible = false
 		},
 		cancelHandler() {
@@ -72,13 +78,15 @@ export default {
 	},
 	computed: {
 		qualitiselecttitle() {
-			return this.qualitiselectinfo.workinfo
+			let title =  this.selectinfo.modelType + this.selectinfo.name
+			return String(title)
 		}
 	},
   watch: {
     opened() {
       this.dialogVisible = true
-			console.log(this.qualitiselectinfo)
+			this.selectinfo = this.qualitiselectinfo[0]
+			console.log(this.selectinfo)
     }
   },
 }

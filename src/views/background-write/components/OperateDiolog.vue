@@ -98,7 +98,7 @@ export default {
 	},
 	computed: {
 		operatetitle() {
-			return this.selectinfo.name + '质量自检'
+			return this.selectinfo.name
 		}
 	},
   watch: {
