@@ -3,7 +3,7 @@
 	<div>
 
   <el-dialog
-    title='新增预警'
+    title='新增数值预警规则'
     :visible.sync="opened"
     width="42%"
 		center
@@ -143,7 +143,7 @@
   </el-dialog>
 
   <el-dialog
-    title='新增预警'
+    title='其他预警规则设置'
     :visible.sync="opened1"
     width="42%"
 		center
@@ -151,13 +151,13 @@
 						<el-row>
 							<el-col :span="8">
 								<dt class="select-title">所属范围:</dt>
-								<el-select v-model="scopevalue" 
+								<el-select v-model="scopevalue1" 
 									clearable 
 									size="mini"
 									class="search-box-handler"
 									@change="getscope">
 									<el-option
-										v-for="item in firstColumnList"
+										v-for="item in firstColumnList1"
 										:key="item.value"
 										:label="item.label"
 										:value="item">
@@ -166,7 +166,7 @@
 							</el-col>
 							<el-col :span="8">
 								<dt class="select-title">构件选择:</dt>
-								<el-select v-model="membervalue" 
+								<el-select v-model="membervalue1" 
 									clearable 
 									size="mini"
 									class="search-box-handler"
@@ -181,7 +181,7 @@
 							</el-col>
 							<el-col :span="8">
 									<dt class="select-title">指标选择:</dt>
-								<el-select v-model="indexvalue" 
+								<el-select v-model="indexvalue1" 
 									clearable 
 									size="mini"
 									class="search-box-handler">
@@ -192,12 +192,6 @@
 										:value="item">
 									</el-option>	
 								</el-select>
-							</el-col>
-						</el-row>
-						<el-row>
-							<el-col :span="24">
-									<dt class="select-title">预警内容:</dt>
-									<el-input v-model="info" size="mini" class="infoinput" placeholder="请输入内容"></el-input>
 							</el-col>
 						</el-row>
 						<el-row>
@@ -233,7 +227,7 @@
 							<el-button size="small"
 							type="success"
 							icon="el-icon-upload"
-							@click="opened1 = false"
+							@click="submitHandlerr"
 							>提交</el-button>
 							<el-button size="small"
 							type="danger"
@@ -318,7 +312,7 @@
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
-									type="success" icon="el-icon-upload" @click="AddWarnDataInfoo">其他预警规则设置</el-button>
+									type="primary" icon="el-icon-upload" @click="AddWarnDataInfoo">其他预警规则设置</el-button>
 								</el-col>
 								<el-col :span="2" :offset="1">
 									<el-button class="certain-button" size="small"
@@ -364,6 +358,9 @@ export default {
 			scopevalue: '',
 			membervalue:'',
 			indexvalue:'',
+			scopevalue1: '',
+			membervalue1:'',
+			indexvalue1:'',
 			rulevalue1:'',
 			rulevalue2:'',
 			rule2value: false,
@@ -393,11 +390,11 @@ export default {
 					"value": "03",
 					"children":[{
 						"label": "注浆量",
-						"value": "1"	
+						"value": "注浆量"	
 					}]
 				},{
 					"label": "管棚模型",
-					"value": "管棚模型",
+					"value": "04",
 					"children":[{
 						"label": "实际管棚长度",
 						"value": "实际管棚长度"			
@@ -445,14 +442,33 @@ export default {
 						},{
 							"label": "3d同养混凝土试块强度",
 							"value": "3d同养混凝土试块强度"			
-						},
-						{
+						},{
 							"label": "7d同养混凝土试块强度",
 							"value": "7d同养混凝土试块强度"			
 						},{
 							"label": "混凝土实际浇筑量",
-							"value": "混凝土实际浇筑量"				
-						},{
+							"value": "混凝土实际浇筑量"			
+						}]		
+				}]
+			}],
+			firstColumnList1: [{
+				"label": "初支开挖",
+				"value": "01",
+				"children": [{
+					"label": "锚杆模型",
+					"value": "05",
+					"children":[{
+						"label": "锚杆锚固质量自检",
+						"value": "锚杆锚固质量自检"		
+					}]
+				}]
+			},{
+				"label": "二衬",
+				"value":"03",
+				"children": [{
+					"label": "拱墙衬砌模型",
+					"value": "01",
+					"children":[{
 							"label": "脱模后二衬表观质量",
 							"value": "脱模后二衬表观质量"				
 						},{
@@ -467,8 +483,8 @@ export default {
 					"label": "洞内排水沟模型",
 					"value": "02",
 					"children":[{
-						"label": "外观质量（错台、线形不顺直、尺寸偏差、外观差）",
-						"value": "外观质量（错台、线形不顺直、尺寸偏差、外观差）"
+						"label": "外观质量",
+						"value": "外观质量"
 					}]	
 				}]
 			}],
@@ -600,9 +616,13 @@ export default {
 							}
 						}
 					}
-					item.valuearr = String(item.value).split(',')
-					item.rulearr = String(item.rule).split(',')
-					item.warnrule = item.rulearr[0].replace(/数值/g,item.valuearr[0]) + ';' +item.rulearr[1].replace(/数值/g,item.valuearr[1])
+					if(item.rule != null){
+						item.valuearr = String(item.value).split(',')
+						item.rulearr = String(item.rule).split(',')
+						item.warnrule = item.rulearr[0].replace(/数值/g,item.valuearr[0]) + ';' +item.rulearr[1].replace(/数值/g,item.valuearr[1])
+					}else{
+						item.warnrule = ''
+					}
 					return item;
 				})
 		},
@@ -633,6 +653,17 @@ export default {
 			this.rulevalue2 != '',
 			this.commentvalue1 != ''){
 					this.submitHandlerbefore()
+				}else{
+					this.$message({
+						message: "条件不完整，未提交！",
+						type: 'warning'
+						});
+				}
+		},
+		submitHandlerr(){
+			if(this.scopevalue.value != '',
+			this.membervalue.value != ''){
+					this.submitHandlerbeforee()
 				}else{
 					this.$message({
 						message: "条件不完整，未提交！",
@@ -695,6 +726,44 @@ export default {
 				this.warnPeopleForm_one.object.length = 0,
 				this.warnPeopleForm_one.object.push( { username:'', phone_number: ''})
 				this.opened = false
+			}).catch(err =>{
+				console.log(err);
+			})
+		},
+		submitHandlerbeforee() {
+			this.manageMember = ''
+			for(let i = 0; i<this.warnPeopleForm_one.object.length ;i++){
+				if(this.warnPeopleForm_one.object[i].username != '' && this.warnPeopleForm_one.object[i].phone_number != ''){
+					this.manageMember = this.warnPeopleForm_one.object[i].username +':' + this.warnPeopleForm_one.object[i].phone_number + '；' + this.manageMember
+				}else{
+					this.manageMember = ''
+				}
+			}
+				this.warnrulefileds = {
+					"componentTypeCode": this.membervalue1.value,
+					"createDate": null,
+					"indexName": this.indexvalue1.value,
+					"info": null,
+					"manageMember": this.manageMember,
+					"modifyDate": null,
+					"objectID": null,
+					"rule": null,
+					"scopeCode": this.scopevalue1.value,
+					"value": null
+				}
+				console.log(this.warnrulefileds)
+			savewarnrule(this.warnrulefileds).then(res => {
+				this.$message({
+					message: "提交成功！",
+					type: 'success'
+					});
+				this.getwarnrule();
+				this.scopevalue1 = '',
+				this.membervalue1 = '',
+				this.indexvalue1 = '',
+				this.warnPeopleForm_one.object.length = 0,
+				this.warnPeopleForm_one.object.push( { username:'', phone_number: ''})
+				this.opened1 = false
 			}).catch(err =>{
 				console.log(err);
 			})

@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { savewarnrule } from '@/api/background.js'
 
 export default {
   name: '',
@@ -63,18 +64,46 @@ export default {
     }
   },
 	methods: {
-		submitHandler() {
+		async submitHandler() {
 			// console.log(this.checkList)
 			this.selectinfo.value = ''
 			for(let i = 0; i < this.checkList.length; i++){
 				this.selectinfo.value = this.selectinfo.value + this.checkList[i].replace("",' ') + ';'
 			}
+			await this.$parent.updateDataInfo()
+			await this.$parent.getsearch()
+			this.checkList = []
 			this.dialogVisible = false
+			await this.$parent.getsearch()
+			// this.addwarninfo()
+
 		},
 		cancelHandler() {
 			this.checkList = [],
 			this.dialogVisible = false
-		}
+		},
+		// addwarninfo() {
+		// 		let warnrulefileds = {
+		// 			"componentTypeCode": this.selectinfo.ebs.substr(19,2),
+		// 			"createDate": null,
+		// 			"indexName": null,
+		// 			"info": null,
+		// 			"manageMember": '',
+		// 			"modifyDate": null,
+		// 			"objectID": null,
+		// 			"rule": null,
+		// 			"scopeCode": this.selectinfo.ebs.substr(19,2),
+		// 			"value": this.selectinfo.value
+		// 		}
+		// 	savewarnrule(warnrulefileds).then(res => {
+		// 		this.$message({
+		// 			message: "提交预警成功！",
+		// 			type: 'success'
+		// 			});
+		// 	}).catch(err =>{
+		// 		console.log(err);
+		// 	})
+		// }
 	},
 	computed: {
 		qualitiselecttitle() {

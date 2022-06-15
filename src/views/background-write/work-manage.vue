@@ -2,7 +2,7 @@
 		<div class="info-box">
 			<el-card class="box-card">
 						<el-row>
-							<el-col :span="6">
+							<el-col :span="7">
 								<dt class="select-title">勘探位置选择</dt>
 								<el-select v-model="positiontype" 
 									clearable 
@@ -19,7 +19,7 @@
 									<el-button type="info" size="mini" plain @click="positionmanage = true">勘探位置管理</el-button>
 									</div>
 							</el-col>
-							<el-col :span="6">
+							<el-col :span="7">
 								<dt class="select-title">分析报告类型</dt>
 								<el-select v-model="reporttype" 
 									clearable 
@@ -36,7 +36,7 @@
 									<el-button type="info" size="mini" plain @click="reportmanage = true">报告类型管理</el-button>
 								</div>
 							</el-col>
-							<el-col :span="5">
+							<el-col :span="4">
 								<dt class="select-titlee">分析报告名称</dt>
 								<el-input v-model="reportname" 
 									clearable 
@@ -44,7 +44,7 @@
 									class="search-box-handlerr">
 								</el-input>
 							</el-col>
-							<el-col :span="5">
+							<el-col :span="4">
 									<dt class="select-titleee">查看链接</dt>
 								<el-input v-model="reportlink" 
 									clearable 
@@ -163,7 +163,7 @@
 						label="勘探位置名称"
 						align="center">
 											<template slot-scope="{row}">
-												<el-input v-if="row.edit" v-model="row.locationName" size="small" clearable/>
+												<el-input v-if="row.edit" v-model="row.locationName" size="small" @keyup.enter.native="editposition(row)" clearable/>
 												<span v-else>{{ row.locationName }}</span>
 											</template>
 					</el-table-column>
@@ -174,7 +174,7 @@
 						<template slot-scope="scope">
 							<el-button
 								size="mini"
-								@click="editposition(scope.row)">编辑</el-button>
+								@click="editposition(scope.row)">完成</el-button>
 							<el-button
 								size="mini"
 								type="danger"
@@ -205,7 +205,7 @@
 						label="报告类型名称"
 						align="center">
 											<template slot-scope="{row}">
-												<el-input v-if="row.edit" v-model="row.typeName" size="small" clearable/>
+												<el-input v-if="row.edit" v-model="row.typeName" size="small" @keyup.enter.native="editreport(row)" clearable/>
 												<span v-else>{{ row.typeName }}</span>
 											</template>
 					</el-table-column>
@@ -216,7 +216,7 @@
 						<template slot-scope="scope">
 							<el-button
 								size="mini"
-								@click="editreport(scope.row)">编辑</el-button>
+								@click="editreport(scope.row)">完成</el-button>
 							<el-button
 								size="mini"
 								type="danger"
@@ -422,31 +422,35 @@ export default {
 						console.log(err);
 					})			
 		},
-		editposition(row){
-			console.log(row)
-			if(row.locationName != ''){
-			let reportLocationDO = {
-				"createDate" : null,
-				"locationName": row.locationName,
-				"modifyDate": null,
-				"objectID": row.objectID
-			}
-			editposition(reportLocationDO).then(res => {
-									this.$message({
-										message: "编辑位置成功！",
-										type: 'success'
-										});
-									row.edit =false
-									this.getPosition();
-								}).catch(err =>{
-									console.log(err);
-								})
-			}else{
+		async editposition(row){
+			// console.log(this.positionData)
+			for(let i = 0; i < this.positionData.length; i++) {
+				console.log(this.positionData[i].locationName == '')
+				if(this.positionData[i].locationName != '' && this.positionData[i].edit == true){
+					let reportLocationDO = {
+						"createDate" : null,
+						"locationName": this.positionData[i].locationName,
+						"modifyDate": null,
+						"objectID": this.positionData[i].objectID
+					}
+					await editposition(reportLocationDO).then(res => {
+											this.$message({
+												message: "编辑位置成功！",
+												type: 'success'
+												});
+											this.positionData[i].edit =false
+										}).catch(err =>{
+											console.log(err);
+										})
+				}else if(this.positionData[i].locationName == ''){
 						this.$message({
 							message: "请输入位置！",
 							type: 'warning'
 							});
+							return
+				}
 			}
+			await this.getPosition();
 		},
 		deleteposition(row){
 			deleteposition(row.objectID).then(res => {
@@ -500,31 +504,34 @@ export default {
 						this.reportoptions.push({chineseName1:this.reportData[i].typeName,code1:this.reportData[i].objectID})
 					}
 		},
-		editreport(val){
-			console.log(val)
-			if(val.typeName != ''){
-			let reportTypeDO = {
-				"createDate" : null,
-				"typeName": val.typeName,
-				"modifyDate": null,
-				"objectID": val.objectID
+		async editreport(val){
+			console.log(this.reportData)
+			for(let i = 0; i < this.reportData.length; i++){
+				if(this.reportData[i].typeName != '' && this.reportData[i].edit == true){
+				let reportTypeDO = {
+					"createDate" : null,
+					"typeName": this.reportData[i].typeName,
+					"modifyDate": null,
+					"objectID": this.reportData[i].objectID
+				}
+				await editreport(reportTypeDO).then(res => {
+										this.$message({
+											message: "编辑报告类型成功！",
+											type: 'success'
+											});
+										this.reportData[i].edit =false
+									}).catch(err =>{
+										console.log(err);
+									})
+				}else if(this.reportData[i].typeName == ''){
+							this.$message({
+								message: "请输入报告类型！",
+								type: 'warning'
+								});
+								return
+				}				
 			}
-			editreport(reportTypeDO).then(res => {
-									this.$message({
-										message: "编辑报告类型成功！",
-										type: 'success'
-										});
-									val.edit =false
-									this.getReport();
-								}).catch(err =>{
-									console.log(err);
-								})
-			}else{
-						this.$message({
-							message: "请输入报告类型！",
-							type: 'warning'
-							});
-			}
+			await this.getReport();
 		},
 		deletereport(val){
 			deletereport(val.objectID).then(res => {
@@ -548,45 +555,38 @@ export default {
   }
 	.select-title {
 		color: #303133;
-		font-size: 15px;
+		font-size: 13px;
 		font-weight: bold;
 		margin-top: 10px;
-		margin-left: 10px;
-		width: 23%;
 	}
 	.select-titlee {
 		color: #303133;
-		font-size: 15px;
+		font-size: 13px;
 		font-weight: bold;
 		margin-top: 10px;
-		margin-left: 10px;
-		width: 30%;
 	}
 	.select-titleee {
 		color: #303133;
-		font-size: 15px;
+		font-size: 13px;
 		font-weight: bold;
 		margin-top: 10px;
-		margin-left: 10px;
-		width: 20%;
 	}
 	.search-box-handler {
-		margin-left: 26%;
-		width: 44%;
+		margin-left: 90px;
+		width: 200px;
 		top: -22px;
 	}
 	.search-box-handlerr {
-		margin-left: 30%;
-		width: 66%;
+		margin-left: 90px;
+		width: 50%;
 		top: -22px;
 	}
 	.search-box-handlerrr {
-		margin-left: 23%;
-		width: 66%;
+		margin-left: 60px;
+		width: 50%;
 		top: -22px;
 	}
 	.certain-button {
-		margin-left: -20px;
 		margin-top: 5px;
 	}
 	.block {
@@ -596,7 +596,7 @@ export default {
 		width: 100%;
 	}
 	.selectbutton{
-		margin-left: 73%;
+		margin-left: 300px;
 		margin-top: -50px;
 	}
 </style>

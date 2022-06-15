@@ -78,11 +78,14 @@ export default {
       this.fileList = arr
     },
     // 手动文件上传
-    uploadFile() {
+    async uploadFile() {
       if (this.fileList.length === 0) {
         this.$message.warning('请选取文件')
         return
       }
+			this.selectinfo.value = this.radio
+			await this.$parent.updateDataInfo()
+			// console.log(this.selectinfo.value)
       let formData = new FormData()
       // 因为要传一个文件数组过去，所以要循环append
       this.fileList.forEach((item, index) => {
@@ -91,12 +94,13 @@ export default {
 			formData.append('id', this.selectinfo.objectID)
 			formData.append('value', this.radio)
       // batchUploadFile是我自己定义的接口
-      batchUploadFile(formData).then(res => {
+      await batchUploadFile(formData).then(res => {
 				this.$message.success('上传成功！')
         this.fileList = []
-				this.$parent.getsearch();
 				this.dialogVisible = false
       })
+			// console.log(this.radio)
+			await this.$parent.getsearch();
     },
     // 上传文件超出个数
     handleExceed(files, fileList) {

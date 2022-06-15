@@ -163,6 +163,15 @@
 										width="80">
 										</el-table-column>
 										<el-table-column
+										align="center"
+										label="链接"
+										v-if="isShow">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.link" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.link }}</span>
+											</template>
+										</el-table-column>
+										<el-table-column
 										sortable='custom'
 										align="center"
 										prop="modifyCreatDate"
@@ -367,6 +376,15 @@
 										prop="unit"
 										label="单位"
 										width="80">
+										</el-table-column>
+										<el-table-column
+										align="center"
+										label="链接"
+										v-if="isShow">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.link" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.link }}</span>
+											</template>
 										</el-table-column>
 										<el-table-column
 										sortable='custom'
@@ -579,6 +597,15 @@
 										width="80">
 										</el-table-column>
 										<el-table-column
+										align="center"
+										label="链接"
+										v-if="isShow">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.link" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.link }}</span>
+											</template>
+										</el-table-column>
+										<el-table-column
 										sortable='custom'
 										align="center"
 										prop="modifyCreatDate"
@@ -789,6 +816,15 @@
 										width="80">
 										</el-table-column>
 										<el-table-column
+										align="center"
+										label="链接"
+										v-if="isShow">
+											<template slot-scope="{row}">
+												<el-input v-if="row.edit" v-model="row.link" class="edit-input" size="small" clearable/>
+												<span v-else>{{ row.link }}</span>
+											</template>
+										</el-table-column>
+										<el-table-column
 										sortable='custom'
 										align="center"
 										prop="modifyCreatDate"
@@ -870,6 +906,7 @@ export default {
 	},
 	data() {
 		return{
+			isShow:false,
 			urltablemapopend: false,
 			urltablemapobject: {},
 			tunneloptions: [],
@@ -1105,11 +1142,20 @@ export default {
 
 		confirmcomponent(item) {
       if (!item) {
-
+				if(this.circlevalue == '01' && this.componentvalue == '01'){
+					this.isShow =true
+				}else{
+					this.isShow = false
+				}
         return
 			} else {
 				this.componentoptions.code = item
 				// console.log(this.componentoptions.code)
+				if(this.circlevalue == '01' && this.componentvalue == '01'){
+					this.isShow =true
+				}else{
+					this.isShow = false
+				}
 			}			
 		},
 		
@@ -1180,7 +1226,7 @@ export default {
 					item.modifyCreatDate = new Date(+new Date(date)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')  
 					return item;
 				})
-				// console.log(this.searchList)
+				console.log(this.searchList)
 			}).catch(err =>{
 				console.log(err);
 			})
@@ -1200,6 +1246,7 @@ export default {
 				const department = this.selectdata[i].department
 				const ebs = this.selectdata[i].ebs
 				const endSegment = this.selectdata[i].endSegment
+				const link = this.selectdata[i].link
 				const modelType = this.selectdata[i].modelType
 				const modifyDate = this.selectdata[i].modifyDate
 				const name = this.selectdata[i].name
@@ -1208,12 +1255,13 @@ export default {
 				const unit = this.selectdata[i].unit
 				const value = this.selectdata[i].value
 				const valueRefer = this.selectdata[i].valueRefer
-				console.log(createDate, department, ebs, endSegment, modelType, modifyDate, name, objectID, startSegment, unit, value, valueRefer)
+				console.log(createDate, department, ebs, endSegment, link, modelType, modifyDate, name, objectID, startSegment, unit, value, valueRefer)
 				this.queryfileds = [{
 					"createDate": createDate,
 					"department": department,
 					"ebs": ebs,
 					"endSegment": endSegment,
+					"link": link,
 					"modelType": modelType,
 					"modifyDate": modifyDate,
 					"name": name,
@@ -1301,12 +1349,12 @@ export default {
 		},
 		qualitiselectWorkInfo() {
 			if(this.selectdata.length == 1){
-				if(this.selectdata[0].name == '脱模后二衬表观质量'){
+				if(this.selectdata[0].name == '脱模后二衬表观质量' || '外观质量'){
 					this.qualitiselectFrom.opened = !this.qualitiselectFrom.opened;
 					this.qualitiselectFrom.qualitiselectBrief = this.selectdata
 					}else{
 						this.$message({
-							message: "只有脱模后二衬表观质量可以使用选择功能！",
+							message: "只有脱模后二衬表观质量和外观质量可以使用选择功能！",
 							type: 'warning'
 						});												
 					}
@@ -1353,7 +1401,7 @@ export default {
 		},
 		clickchange(row) {
 			console.log(row)
-			if(row.name != '锚杆锚固质量自检' && row.name != '自检结果' && row.name != '脱模后二衬表观质量'){
+			if(row.name != '锚杆锚固质量自检' && row.name != '自检结果' && row.name != '脱模后二衬表观质量' && row.name != '外观质量'){
 				row.edit = !row.edit
 			}else if(row.name == '锚杆锚固质量自检'){
 				this.$message({
@@ -1363,6 +1411,11 @@ export default {
 			}else if(row.name == '脱模后二衬表观质量'){
 				this.$message({
 					message: "编辑脱模后二衬表观质量请使用选择功能！",
+					type: 'warning'
+				})				
+			}else if(row.name == '外观质量'){
+				this.$message({
+					message: "编辑外观质量请使用选择功能！",
 					type: 'warning'
 				})				
 			}else if(row.name == '自检结果'){

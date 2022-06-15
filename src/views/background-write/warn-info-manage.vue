@@ -362,7 +362,7 @@
 							</el-col>
 							<el-col :span="12">
 								<div class="button">
-									<el-button type="info">消警</el-button>
+									<el-button type="info" @click="deletewarninfo">消警</el-button>
 								</div>
 							</el-col>
 						</el-row>
@@ -544,7 +544,7 @@
 							</el-col>
 							<el-col :span="12">
 								<div class="button">
-									<el-button type="info">消警</el-button>
+									<el-button type="info" @click="deletewarninfo">消警</el-button>
 								</div>
 							</el-col>
 						</el-row>
@@ -726,7 +726,7 @@
 							</el-col>
 							<el-col :span="12">
 								<div class="button">
-									<el-button type="info">消警</el-button>
+									<el-button type="info" @click="deletewarninfo">消警</el-button>
 								</div>
 							</el-col>
 						</el-row>

@@ -10,15 +10,17 @@
 		<el-col :span="2.5" :offset="4">
 			<span class="select-title">是&emsp;否&emsp;合&emsp;格&emsp;：</span>
 		</el-col>
-		<el-col :span="4">
-			<el-radio v-model="radio" label = "合格" border size="mini">是</el-radio>
-			<el-radio v-model="radio" label = "不合格" border size="mini">否</el-radio>
+		<el-col :span="6">
+			<el-radio-group v-model="radio" @change="watchrule2change">
+			<el-radio label = "合格" border size="mini">是</el-radio>
+			<el-radio label = "不合格" border size="mini">否</el-radio>
+			</el-radio-group>
 		</el-col>
-		<el-col :span="2.5" :offset="3">
+		<el-col :span="2.5" :offset="1">
 			<span class="select-title">不合格数量：</span>
 		</el-col>
 		<el-col :span="4">
-			<el-input v-model="unpasscount" placeholder="请输入内容"></el-input>
+			<el-input v-model="unpasscount" placeholder="请输入内容" :disabled = "rule2value"></el-input>
 		</el-col>
 	</el-row>
 	<el-row  :gutter="5">
@@ -26,7 +28,7 @@
 			<span class="select-title">不合格位置：</span>
 		</el-col>
 		<el-col :span="4">
-			<el-input v-model="unpassadress" placeholder="请输入内容"></el-input>
+			<el-input v-model="unpassadress" placeholder="请输入内容" :disabled = "rule2value"></el-input>
 		</el-col>
 		<el-col :span="2.5" :offset="3">
 			<span class="select-title">合&emsp;格&emsp;数&emsp;量&emsp;：</span>
@@ -74,6 +76,7 @@ export default {
   },
   data() {
     return {
+			rule2value: false,
       dialogVisible: false,
 			selectinfo: {},
 			radio: "",
@@ -83,14 +86,29 @@ export default {
     }
   },
 	methods: {
-		submitHandler() {
+		watchrule2change(val){
+			console.log(val)
+			if(val == '合格'){
+				this.rule2value = true
+			}else{
+				this.rule2value = false
+			}
+		},
+		async submitHandler() {
 			if(this.radio === "合格"){
-				this.selectinfo.value = this.radio
+				this.selectinfo.value = this.radio+ "," + "合格数量：" + this.passcount
 			}
 			else if(this.radio === "不合格"){
-				this.selectinfo.value = "不合格" +"\xa0\xa0" +  "不合格数量：" + this.unpasscount + "\xa0\xa0" + "不合格位置：" + this.unpassadress + "\xa0\xa0" + "合格数量：" + this.passcount
+				this.selectinfo.value = "不合格" +"," +  "不合格数量：" + this.unpasscount + "," + "不合格位置：" + this.unpassadress + "," + "合格数量：" + this.passcount
 			}
+			await this.$parent.updateDataInfo()
+			this.unpasscount= ''
+			this.unpassadress= ''
+			this.passcount= ''
+			this.radio = ''
+			this.rule2value = false
 			this.dialogVisible = false
+			await this.$parent.getsearch()
 		},
 		cancelHandler() {
 			this.dialogVisible = false
